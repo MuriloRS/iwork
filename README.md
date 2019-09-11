@@ -1,6 +1,6 @@
-# contratacao_funcionarios
+# Aplicativo Flutter
 
-A new Flutter project.
+Um projeto pessoal feito em Flutter e Firebase, é um aplicativo para contratação de funcionários temporários, está em fase de desenvolvimento.
 
 ## Getting Started
 
