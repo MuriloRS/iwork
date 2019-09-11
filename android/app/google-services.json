@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "282957820974",
+    "firebase_url": "https://contratacaofuncionarios-5aae5.firebaseio.com",
+    "project_id": "contratacaofuncionarios-5aae5",
+    "storage_bucket": "contratacaofuncionarios-5aae5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282957820974:android:16da2d611d087104",
+        "android_client_info": {
+          "package_name": "com.example.contratacao_funcionarios"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "282957820974-c73e26fu78aeq1ia31ei3lhbh86k8msr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.contratacao_funcionarios",
+            "certificate_hash": "c2873e5a0f157925a9bd56877b15193ce456b0dc"
+          }
+        },
+        {
+          "client_id": "282957820974-e6ia5erbmqkn7d210btsqbj54hsb4rb1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEu-cEqYy8PVVT0obW4OIaxkZux-JjS_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "282957820974-e6ia5erbmqkn7d210btsqbj54hsb4rb1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
