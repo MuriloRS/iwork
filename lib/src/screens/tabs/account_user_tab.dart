@@ -1,18 +1,23 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
-import 'package:contratacao_funcionarios/src/shared/combobox_button.dart';
-import 'package:contratacao_funcionarios/src/shared/consumables.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
+import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
+import 'package:contratacao_funcionarios/src/widgets/download_input_button.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
-import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
-class AccountUserTab extends StatelessWidget {
+class AccountUserTab extends StatefulWidget {
+  @override
+  _AccountUserTabState createState() => _AccountUserTabState();
+}
+
+class _AccountUserTabState extends State<AccountUserTab> {
   TextEditingController _nomeInputController;
-
-  final consumable = Consumables();
+  TextEditingController _skillsInputController;
+  GlobalKey<AutoCompleteTextFieldState<String>> _citieController;
 
   @override
   Widget build(BuildContext context) {
@@ -20,152 +25,111 @@ class AccountUserTab extends StatelessWidget {
 
     UserProviderModel _model = Provider.of<UserProviderModel>(context);
     AccountUserBloc _bloc = AccountUserBloc();
+    _citieController = new GlobalKey();
 
     return DefaultSliverScaffold(
         titleScaffold: "Conta",
         content: Container(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
           child: Column(
             children: <Widget>[
               SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    !_model.userData['profileCompleted']
-                        ? Card(
-                            color: Colors.green,
-                            elevation: 3,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                child: Container(
+                    height: MediaQuery.of(context).size.height - 200,
+                    child: Column(
+                      children: <Widget>[
+                        InputField(
+                            _nomeInputController,
+                            false,
+                            TextInputType.emailAddress,
+                            'Nome Completo',
+                            [],
+                            _bloc.outName,
+                            _bloc.changeName,
+                            'Nome conta',
+                            false),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        FutureBuilder(
+                          future: _bloc.getCities(context),
+                          builder:
+                              (context, AsyncSnapshot<List<String>> snapshot) {
+                            if (snapshot.connectionState.index ==
+                                    ConnectionState.none.index ||
+                                snapshot.connectionState.index ==
+                                    ConnectionState.waiting.index) {
+                              return Stack(
+                                alignment: Alignment.center,
                                 children: <Widget>[
-                                  Text("Quase!",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700)),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Text(
-                                    "Agora você precisa completar seu cadastro, " +
-                                        "quanto mais informações você colocar mais " +
-                                        "chances terá de conseguir trabalhos.",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 16),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                  AutoCompleteInput(null, 'Cidade',_citieController),
+                                  Center(
+                                    child: Container(
+                                        height: 24,
+                                        width: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          backgroundColor: Colors.white,
+                                          valueColor:
+                                              new AlwaysStoppedAnimation<Color>(
+                                                  Colors.green[600]),
+                                        )),
+                                  )
                                 ],
-                              ),
-                            ))
-                        : Container(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputField(
-                        _nomeInputController,
-                        false,
-                        TextInputType.emailAddress,
-                        'Nome Completo',
-                        [],
-                        _bloc.outName,
-                        _bloc.changeName,
-                        'Nome conta',
-                        false),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    StreamBuilder(
-                      stream: consumable.getBrazilianStates().asStream(),
-                      builder: (context,
-                          AsyncSnapshot<List<DropdownMenuItem>> builder) {
-                        if (builder.connectionState.index ==
-                                ConnectionState.none.index ||
-                            builder.connectionState.index ==
-                                ConnectionState.waiting.index) {
-                          return Stack(
-                            children: <Widget>[
-                              ComboboxButton(
-                                hintText: 'Estado',
-                                options: null,
-                              ),
-                              Center(
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Colors.black,
-                                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.green[600]),
-                                ),
-                              )
-                            ],
-                          );
-                        } else {
-                          return ComboboxButton(
-                            hintText: "Estado",
-                            options: builder.data,
-                          );
-                        }
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputField(
-                        _nomeInputController,
-                        false,
-                        TextInputType.emailAddress,
-                        'Cidade',
-                        [],
-                        _bloc.outName,
-                        _bloc.changeName,
-                        'cidade conta',
-                        false),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputField(
-                        _nomeInputController,
-                        false,
-                        TextInputType.multiline,
-                        'Experiências',
-                        [],
-                        _bloc.outName,
-                        _bloc.changeName,
-                        'experiencias conta',
-                        false),
-                    Text(
-                      "Coloque apenas o que você já tem experiência. Separe por virgula, ex: mecânico, garçom.",
-                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputField(
-                        _nomeInputController,
-                        false,
-                        TextInputType.emailAddress,
-                        'Currículo',
-                        [],
-                        _bloc.outName,
-                        _bloc.changeName,
-                        'curriculo conta',
-                        false),
-                    Text(
-                      "Anexe o pdf do seu currículo.",
-                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                              );
+                            } else {
+                              return AutoCompleteInput(snapshot.data, 'Cidade',_citieController);
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        InputField(
+                            _skillsInputController,
+                            false,
+                            TextInputType.multiline,
+                            'Habilidades',
+                            [],
+                            _bloc.outSkills,
+                            _bloc.changeSkills,
+                            'Habilidades input',
+                            false),
+                        Text(
+                          "Coloque apenas o que você já tem experiência. Separe por virgula, ex: mecânico, garçom.",
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[500]),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        DownloadInputButton(),
+                        Text(
+                          "Anexe o pdf do seu currículo.",
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[500]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )),
               ),
               SizedBox(
-                height: 16,
+                height: 25,
               ),
               Container(
                 width: double.infinity,
                 child: FlatButton(
-                    onPressed: () => {},
+                    onPressed: () {
+                      _model.userData
+                          .putIfAbsent('name', () => _nomeInputController.text);
+                      _model.userData.putIfAbsent(
+                          'skills', () => _skillsInputController.text);
+                      _model.userData.putIfAbsent('city',
+                          () => _citieController.currentState.textSubmitted);
+
+                      _bloc.saveController.add({});
+                    },
                     color: Theme.of(context).hintColor,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -182,8 +146,8 @@ class AccountUserTab extends StatelessWidget {
                           'SALVAR',
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500),
                         ),
                       ],
                     )),

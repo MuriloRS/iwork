@@ -11,7 +11,7 @@ class ComboboxButton extends StatefulWidget {
 }
 
 class _DropdownState extends State<ComboboxButton> {
-  String _selectedLocation ;
+  String _selectedLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,9 @@ class _DropdownState extends State<ComboboxButton> {
         child: Container(
             padding: EdgeInsets.symmetric(horizontal: 15),
             decoration: ShapeDecoration(
+              color: widget.options == null
+                  ? Color.fromRGBO(220, 220, 220, 0.5)
+                  : Colors.white,
               shape: RoundedRectangleBorder(
                 side: BorderSide(
                     width: 1.0,
@@ -28,17 +31,17 @@ class _DropdownState extends State<ComboboxButton> {
               ),
             ),
             child: DropdownButton(
-              
               hint: Text(
                 widget.hintText,
+                style: TextStyle(color: Colors.grey[600], fontSize: 16),
               ),
+              items: widget.options,
               value: _selectedLocation,
               onChanged: (newValue) {
                 setState(() {
                   _selectedLocation = newValue;
                 });
               },
-              items: widget.options,
               isExpanded: true,
               elevation: 5,
               style: TextStyle(color: Colors.grey[600], fontSize: 16),
