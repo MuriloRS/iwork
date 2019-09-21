@@ -4,7 +4,9 @@ import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart
 import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/download_input_button.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
@@ -17,15 +19,23 @@ class AccountUserTab extends StatefulWidget {
 class _AccountUserTabState extends State<AccountUserTab> {
   TextEditingController _nomeInputController;
   TextEditingController _skillsInputController;
-  GlobalKey<AutoCompleteTextFieldState<String>> _citieController;
+  TextEditingController _emailInputController;
+  GlobalKey<AutoCompleteTextFieldState<String>> _citieController =
+      new GlobalKey();
+      AccountUserBloc _bloc;
+      UserProviderModel _model;
 
   @override
   Widget build(BuildContext context) {
     _nomeInputController = TextEditingController();
+    _emailInputController = TextEditingController();
+    _skillsInputController = TextEditingController();
 
-    UserProviderModel _model = Provider.of<UserProviderModel>(context);
-    AccountUserBloc _bloc = AccountUserBloc();
-    _citieController = new GlobalKey();
+    _model = Provider.of<UserProviderModel>(context);
+    _bloc= AccountUserBloc();
+
+    _emailInputController.text = _model.userFirebase.email;
+    _nomeInputController.text = _model.userData['name'];
 
     return DefaultSliverScaffold(
         titleScaffold: "Conta",
@@ -41,12 +51,29 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         InputField(
                             _nomeInputController,
                             false,
-                            TextInputType.emailAddress,
-                            'Nome Completo',
-                            [],
+                            TextInputType.text,
+                            'Nome Completo*',
+                            [
+                              FormBuilderValidators.required(errorText: "O campo nome é obrigatório")
+                            ],
                             _bloc.outName,
                             _bloc.changeName,
                             'Nome conta',
+                            false),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        InputField(
+                            _emailInputController,
+                            false,
+                            TextInputType.emailAddress,
+                            'Email*',
+                            [
+                              FormBuilderValidators.required(errorText: "O campo email é obrigatório")
+                            ],
+                            null,
+                            null,
+                            'Email conta',
                             false),
                         SizedBox(
                           height: 20,
@@ -62,7 +89,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                               return Stack(
                                 alignment: Alignment.center,
                                 children: <Widget>[
-                                  AutoCompleteInput(null, 'Cidade',_citieController),
+                                  AutoCompleteInput(
+                                      null, 'Cidade*', null, _model, null, null),
                                   Center(
                                     child: Container(
                                         height: 24,
@@ -78,7 +106,13 @@ class _AccountUserTabState extends State<AccountUserTab> {
                                 ],
                               );
                             } else {
-                              return AutoCompleteInput(snapshot.data, 'Cidade',_citieController);
+                              return AutoCompleteInput(
+                                  snapshot.data,
+                                  'Cidade',
+                                  _citieController,
+                                  _model,
+                                  _bloc.outCities,
+                                  _bloc.changeCities);
                             }
                           },
                         ),
@@ -104,7 +138,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         SizedBox(
                           height: 20,
                         ),
-                        DownloadInputButton(),
+                        DownloadInputButton(_bloc),
                         Text(
                           "Anexe o pdf do seu currículo.",
                           style:
@@ -119,16 +153,16 @@ class _AccountUserTabState extends State<AccountUserTab> {
               ),
               Container(
                 width: double.infinity,
-                child: FlatButton(
+                child: CupertinoButton(
                     onPressed: () {
                       _model.userData
                           .putIfAbsent('name', () => _nomeInputController.text);
                       _model.userData.putIfAbsent(
                           'skills', () => _skillsInputController.text);
-                      _model.userData.putIfAbsent('city',
-                          () => _citieController.currentState.textSubmitted);
+                      _model.userData
+                          .putIfAbsent('city', () => _model.userData['city']);
 
-                      _bloc.saveController.add({});
+                      _bloc.saveController.add(_model);
                     },
                     color: Theme.of(context).hintColor,
                     child: Row(

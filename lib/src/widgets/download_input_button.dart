@@ -1,7 +1,15 @@
+import 'dart:io';
+
+import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
+import 'package:contratacao_funcionarios/src/shared/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DownloadInputButton extends StatelessWidget {
+  final AccountUserBloc _bloc;
+
+  DownloadInputButton(this._bloc);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +45,10 @@ class DownloadInputButton extends StatelessWidget {
             ],
           ),
           color: Colors.white,
-          onPressed: () {},
+          onPressed: () async {
+            this._bloc.curriculum = await FilePicker.getMultiFile(
+                fileExtension: 'pdf', type: FileType.CUSTOM);
+          },
         ));
   }
 }

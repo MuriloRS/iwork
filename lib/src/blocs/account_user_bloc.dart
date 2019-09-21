@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -12,7 +15,7 @@ class AccountUserBloc extends BlocBase {
   final skillsController = BehaviorSubject<String>();
   final citiesController = BehaviorSubject<String>();
   final curriculumController = BehaviorSubject<String>();
-  final saveController = BehaviorSubject<Map>();
+  final saveController = BehaviorSubject<UserProviderModel>();
 
   //STREAMS
   Stream<AccountUserState> get outState => stateController.stream;
@@ -20,14 +23,14 @@ class AccountUserBloc extends BlocBase {
   Stream<String> get outSkills => skillsController.stream;
   Stream<String> get outCities => citiesController.stream;
   Stream<String> get outCurriculum => curriculumController.stream;
-  Stream<Map> get outSave => saveController.stream;
+  Stream<UserProviderModel> get outSave => saveController.stream;
 
   //SINKS
   Function(String) get changeSkills => skillsController.sink.add;
   Function(String) get changeName => nameController.sink.add;
   Function(String) get changeCities => citiesController.sink.add;
   Function(String) get changeCurriculum => curriculumController.sink.add;
-  Sink<Map> get changeSave => saveController.sink;
+  Sink<UserProviderModel> get changeSave => saveController.sink;
 
   AccountUserBloc() {
     saveController.listen(_saveAccountDetail);
@@ -55,9 +58,29 @@ class AccountUserBloc extends BlocBase {
     return listCities;
   }
 
-  _saveAccountDetail(map){
-    if(""== ""){
+  _saveAccountDetail(UserProviderModel user) {
+    stateController.add(AccountUserState.LOADING);
 
+    try {
+      
+      //VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
+      if(user.userData['name'] == null || user.userData['name'] == ''){
+        nameController.addError("O campo nome é obrigatório");
+        stateController.add(AccountUserState.FAIL);
+      }
+      if(user.userData['city'] == null || user.userData['city'] == ''){
+        citiesController.addError("O campo cidade é obrigatório");
+        stateController.add(AccountUserState.FAIL);
+      }
+
+      Firestore.instance
+          .collection("users")
+          .document(user.userFirebase.uid)
+          .updateData(user.userData);
+
+      stateController.add(AccountUserState.SUCCESS);
+    } catch (e) {
+      stateController.add(AccountUserState.FAIL);
     }
   }
 
