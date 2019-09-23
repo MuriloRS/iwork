@@ -9,20 +9,26 @@ class AutoCompleteInput extends StatefulWidget {
   final UserProviderModel _model;
   final Stream<String> stream;
   final Function(String) onChanged;
+  final String city;
 
   AutoCompleteInput(this.options, this.hintText, this._citieController,
-      this._model, this.stream, this.onChanged);
+      this._model, this.stream, this.onChanged, this.city);
 
   @override
   _AutoCompleteInputState createState() => _AutoCompleteInputState();
 }
 
 class _AutoCompleteInputState extends State<AutoCompleteInput> {
-  var controller = TextEditingController();
-  String currentText = "";
+  TextEditingController controller;
+  String currentText;
 
   @override
   Widget build(BuildContext context) {
+    controller = TextEditingController();
+    controller.text = widget.city;
+    currentText = widget.city;
+
+
     return StreamBuilder<String>(
       stream: widget.stream,
       builder: (context, AsyncSnapshot<String> snapshot) {
@@ -31,7 +37,9 @@ class _AutoCompleteInputState extends State<AutoCompleteInput> {
           controller: controller,
           suggestions: widget.options,
           clearOnSubmit: false,
-          textChanged: widget.onChanged,
+          textChanged: (s){
+            widget._model.userData['city'] = s;
+          },
           textSubmitted: (text) => setState(() {
             if (text != "") {
               controller.text = text;

@@ -1,9 +1,11 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/shared/alerts.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/download_input_button.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
+import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -22,8 +24,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
   TextEditingController _emailInputController;
   GlobalKey<AutoCompleteTextFieldState<String>> _citieController =
       new GlobalKey();
-      AccountUserBloc _bloc;
-      UserProviderModel _model;
+  AccountUserBloc _bloc;
+  UserProviderModel _model;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +34,13 @@ class _AccountUserTabState extends State<AccountUserTab> {
     _skillsInputController = TextEditingController();
 
     _model = Provider.of<UserProviderModel>(context);
-    _bloc= AccountUserBloc();
+    _bloc = AccountUserBloc();
 
     _emailInputController.text = _model.userFirebase.email;
     _nomeInputController.text = _model.userData['name'];
+    _skillsInputController.text = _model.getUserSkills();
+
+    _listenOutState();
 
     return DefaultSliverScaffold(
         titleScaffold: "Conta",
@@ -54,7 +59,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                             TextInputType.text,
                             'Nome Completo*',
                             [
-                              FormBuilderValidators.required(errorText: "O campo nome é obrigatório")
+                              FormBuilderValidators.required(
+                                  errorText: "O campo nome é obrigatório")
                             ],
                             _bloc.outName,
                             _bloc.changeName,
@@ -69,7 +75,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                             TextInputType.emailAddress,
                             'Email*',
                             [
-                              FormBuilderValidators.required(errorText: "O campo email é obrigatório")
+                              FormBuilderValidators.required(
+                                  errorText: "O campo email é obrigatório")
                             ],
                             null,
                             null,
@@ -89,8 +96,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                               return Stack(
                                 alignment: Alignment.center,
                                 children: <Widget>[
-                                  AutoCompleteInput(
-                                      null, 'Cidade*', null, _model, null, null),
+                                  AutoCompleteInput(null, 'Cidade*', null,
+                                      _model, null, null, ''),
                                   Center(
                                     child: Container(
                                         height: 24,
@@ -108,11 +115,12 @@ class _AccountUserTabState extends State<AccountUserTab> {
                             } else {
                               return AutoCompleteInput(
                                   snapshot.data,
-                                  'Cidade',
+                                  'Cidade*',
                                   _citieController,
                                   _model,
                                   _bloc.outCities,
-                                  _bloc.changeCities);
+                                  _bloc.changeCities,
+                                  _model.userData['city']);
                             }
                           },
                         ),
@@ -151,43 +159,74 @@ class _AccountUserTabState extends State<AccountUserTab> {
               SizedBox(
                 height: 25,
               ),
-              Container(
-                width: double.infinity,
-                child: CupertinoButton(
-                    onPressed: () {
-                      _model.userData
-                          .putIfAbsent('name', () => _nomeInputController.text);
-                      _model.userData.putIfAbsent(
-                          'skills', () => _skillsInputController.text);
-                      _model.userData
-                          .putIfAbsent('city', () => _model.userData['city']);
+              StreamBuilder(
+                stream: _bloc.stateController,
+                builder:
+                    (context, AsyncSnapshot<AccountUserState> stateSnapshot) {
+                  switch (stateSnapshot.data) {
+                    case AccountUserState.LOADING:
+                      return Loader();
+                      break;
+                    default:
+                      return Container(
+                        width: double.infinity,
+                        child: CupertinoButton(
+                          onPressed: () {
+                            _model.userData['name'] = _nomeInputController.text;
 
-                      _bloc.saveController.add(_model);
-                    },
-                    color: Theme.of(context).hintColor,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          FontAwesomeIcons.save,
-                          size: 20,
-                          color: Colors.white,
+                            _model.userData['skills'] =
+                                _skillsInputController.text.split(",");
+
+                            _bloc.saveController.add(_model);
+                          },
+                          color: Theme.of(context).hintColor,
+                          child: Text(
+                            'SALVAR',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          'SALVAR',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    )),
+                      );
+                  }
+                },
               )
             ],
           ),
         ));
+  }
+
+  void _listenOutState() {
+    _bloc.outState.listen((state) {
+      switch (state) {
+        case AccountUserState.SUCCESS:
+          Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 10),
+            elevation: 5,
+            content: Container(
+                height: 50,
+                alignment: Alignment.center,
+                child: Text("Seu cadastro foi salvo!",
+                    style: TextStyle(fontSize: 18))),
+          ));
+          break;
+        case AccountUserState.FAIL:
+          Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 10),
+            elevation: 5,
+            content: Container(
+                height: 50,
+                alignment: Alignment.center,
+                child: Text("Seu cadastro foi salvo!",
+                    style: TextStyle(fontSize: 18))),
+          ));
+          break;
+        default:
+          return Container();
+      }
+    });
   }
 }

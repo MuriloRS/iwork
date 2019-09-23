@@ -9,8 +9,11 @@ import 'package:rxdart/subjects.dart';
 enum AccountUserState { IDLE, LOADING, SUCCESS, FAIL }
 
 class AccountUserBloc extends BlocBase {
+  File curriculum;
+
   //CONTROLLERS
   final stateController = BehaviorSubject<AccountUserState>();
+  final stateCitiesController = BehaviorSubject<AccountUserState>();
   final nameController = BehaviorSubject<String>();
   final skillsController = BehaviorSubject<String>();
   final citiesController = BehaviorSubject<String>();
@@ -19,6 +22,7 @@ class AccountUserBloc extends BlocBase {
 
   //STREAMS
   Stream<AccountUserState> get outState => stateController.stream;
+  Stream<AccountUserState> get outStateCities => stateController.stream;
   Stream<String> get outName => nameController.stream;
   Stream<String> get outSkills => skillsController.stream;
   Stream<String> get outCities => citiesController.stream;
@@ -37,7 +41,7 @@ class AccountUserBloc extends BlocBase {
   }
 
   Future<List<String>> getCities(context) async {
-    stateController.add(AccountUserState.LOADING);
+    stateCitiesController.add(AccountUserState.LOADING);
 
     List<String> listCities = new List();
 
@@ -50,9 +54,9 @@ class AccountUserBloc extends BlocBase {
 
       parsed.forEach((m) => listCities.add(m['nome']));
 
-      stateController.add(AccountUserState.SUCCESS);
+      stateCitiesController.add(AccountUserState.SUCCESS);
     } catch (e) {
-      stateController.add(AccountUserState.FAIL);
+      stateCitiesController.add(AccountUserState.FAIL);
     }
 
     return listCities;
@@ -62,21 +66,29 @@ class AccountUserBloc extends BlocBase {
     stateController.add(AccountUserState.LOADING);
 
     try {
-      
       //VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
-      if(user.userData['name'] == null || user.userData['name'] == ''){
+      if (user.userData['name'] == null || user.userData['name'] == '') {
         nameController.addError("O campo nome é obrigatório");
         stateController.add(AccountUserState.FAIL);
+
+        return;
       }
-      if(user.userData['city'] == null || user.userData['city'] == ''){
+      if (user.userData['city'] == null || user.userData['city'] == '') {
         citiesController.addError("O campo cidade é obrigatório");
         stateController.add(AccountUserState.FAIL);
+        return;
       }
+
+      user.userData['profileCompleted'] = true;
 
       Firestore.instance
           .collection("users")
           .document(user.userFirebase.uid)
           .updateData(user.userData);
+
+          if(this.curriculum != null){
+            
+          }
 
       stateController.add(AccountUserState.SUCCESS);
     } catch (e) {
@@ -94,5 +106,6 @@ class AccountUserBloc extends BlocBase {
     stateController.close();
     curriculumController.close();
     saveController.close();
+    stateCitiesController.close();
   }
 }

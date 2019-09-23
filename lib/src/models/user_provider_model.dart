@@ -4,21 +4,9 @@ import 'package:flutter/material.dart';
 class UserProviderModel extends ChangeNotifier{
   Map userData;
   FirebaseUser userFirebase;
-/*
-  void setUserData(Map userData){
-    this._userData = userData;
-  }
 
-  void setUserFirebase(FirebaseUser firebaseUser){
-    this._userFirebase = firebaseUser;
+  String getUserSkills(){
+    return userData['skills'].toString().replaceAll('[', '').replaceAll(']', '');
   }
-
-  Map getUserData(){
-    return this._userData;
-  }
-
-  FirebaseUser getUserFirebase(){
-    return this._userFirebase;
-  }*/
 
 }
