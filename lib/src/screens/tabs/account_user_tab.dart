@@ -1,6 +1,5 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
-import 'package:contratacao_funcionarios/src/shared/alerts.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/download_input_button.dart';
@@ -9,9 +8,9 @@ import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccountUserTab extends StatefulWidget {
   @override
@@ -146,13 +145,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         SizedBox(
                           height: 20,
                         ),
-                        DownloadInputButton(_bloc),
-                        Text(
-                          "Anexe o pdf do seu currículo.",
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.grey[500]),
-                          textAlign: TextAlign.center,
-                        ),
+                        DownloadInputButton(_bloc, _model),
+                        
                       ],
                     )),
               ),

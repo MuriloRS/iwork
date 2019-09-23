@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:path/path.dart' as p;
+import 'package:url_launcher/url_launcher.dart';
 
 enum AccountUserState { IDLE, LOADING, SUCCESS, FAIL }
 
@@ -86,14 +89,43 @@ class AccountUserBloc extends BlocBase {
           .document(user.userFirebase.uid)
           .updateData(user.userData);
 
-          if(this.curriculum != null){
-            
-          }
+      if (this.curriculum != null) {
+        final StorageReference storageRef = FirebaseStorage.instance
+            .ref()
+            .child(
+                user.userFirebase.uid + "/" + p.basename(this.curriculum.path));
+
+        final StorageUploadTask uploadTask = storageRef.putFile(
+          File(this.curriculum.path),
+        );
+      } else {
+        FirebaseStorage.instance
+            .ref()
+            .child(
+                user.userFirebase.uid + "/" + p.basename(this.curriculum.path))
+            .delete();
+      }
 
       stateController.add(AccountUserState.SUCCESS);
     } catch (e) {
       stateController.add(AccountUserState.FAIL);
     }
+  }
+
+  void openPdf(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void deleteCurriculum(UserProviderModel model) {
+    curriculum = null;
+
+    model.userData['curriculum'] = '';
+
+    _saveAccountDetail(model);
   }
 
   @override
