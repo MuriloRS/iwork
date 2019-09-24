@@ -1,7 +1,9 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
+import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
+import 'package:contratacao_funcionarios/src/widgets/combobox_button.dart';
 import 'package:contratacao_funcionarios/src/widgets/download_input_button.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
@@ -25,6 +27,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
       new GlobalKey();
   AccountUserBloc _bloc;
   UserProviderModel _model;
+  UserBloc _userBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +37,13 @@ class _AccountUserTabState extends State<AccountUserTab> {
 
     _model = Provider.of<UserProviderModel>(context);
     _bloc = AccountUserBloc();
+    _userBloc = UserBloc(_model);
+
+    String _selectedLocation;
 
     _emailInputController.text = _model.userFirebase.email;
     _nomeInputController.text = _model.userData['name'];
-    _skillsInputController.text = _model.getUserSkills();
+    _skillsInputController.text = _userBloc.getUserSkills().trim();
 
     _listenOutState();
 
@@ -145,14 +151,33 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         SizedBox(
                           height: 20,
                         ),
+                        Text("Aceitar trabalho em qualquer horário? ", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey[700]),),
+                        ComboboxButton(
+                            options: [
+                              DropdownMenuItem(
+                                child: Text('Sim',
+                                    style: TextStyle(color: Colors.grey[700])),
+                                value: 'Sim',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Não',
+                                    style: TextStyle(color: Colors.grey[700])),
+                                value: 'Não',
+                              )
+                            ],
+                            model: this._model,
+                            hintText: ""),
+                        SizedBox(
+                          height: 20,
+                        ),
                         DownloadInputButton(_bloc, _model),
-                        
                       ],
                     )),
               ),
               SizedBox(
                 height: 25,
               ),
+              
               StreamBuilder(
                 stream: _bloc.stateController,
                 builder:
@@ -168,8 +193,10 @@ class _AccountUserTabState extends State<AccountUserTab> {
                           onPressed: () {
                             _model.userData['name'] = _nomeInputController.text;
 
-                            _model.userData['skills'] =
-                                _skillsInputController.text.split(",");
+                            _model.userData['skills'] = _skillsInputController
+                                .text
+                                .replaceAll(' ', '')
+                                .split(",");
 
                             _bloc.saveController.add(_model);
                           },
@@ -214,7 +241,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
             content: Container(
                 height: 50,
                 alignment: Alignment.center,
-                child: Text("Seu cadastro foi salvo!",
+                child: Text("Algum campo não foi preenchido!",
                     style: TextStyle(fontSize: 18))),
           ));
           break;

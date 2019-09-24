@@ -1,3 +1,4 @@
+import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
@@ -12,8 +13,9 @@ class HomeUserTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserProviderModel _model = Provider.of<UserProviderModel>(context);
+    UserBloc bloc = UserBloc(_model);
 
-    if (!_model.userData['profileCompleted']) {
+    if (!_model.userData['profileCompleted'] && bloc.isLoggedIn()) {
       return AccountUserTab();
     }
 

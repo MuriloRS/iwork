@@ -1,4 +1,5 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
+import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/shared/file_picker.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
@@ -18,14 +19,18 @@ class DownloadInputButton extends StatefulWidget {
 class _DownloadInputButtonState extends State<DownloadInputButton> {
   bool isCurriculumLoaded = false;
   String basename;
+  UserBloc _userBloc;
+
   @override
   Widget build(BuildContext context) {
-    basename = widget._model.userData['curriculum'] == ''
+    basename = widget._model.userData['curriculum'] == '' && isCurriculumLoaded
         ? p.basename(widget._bloc.curriculum.path)
         : widget._model.userData['curriculum'];
 
+    _userBloc = UserBloc(widget._model);
+
     return FutureBuilder(
-      future: widget._model.getCurriculumUser(basename),
+      future: _userBloc.getCurriculumUser(basename),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
@@ -106,7 +111,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
                       }
                     },
                   )),
-              widget._model.userData['curriculum'] == ''
+              !isCurriculumLoaded && widget._model.userData['curriculum'] == ''
                   ? Text(
                       "Anexe o pdf do seu currículo.",
                       style: TextStyle(fontSize: 12, color: Colors.grey[500]),

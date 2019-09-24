@@ -1,4 +1,6 @@
+import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/screens/login_page.dart';
 import 'package:contratacao_funcionarios/src/widgets/drawer_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,12 +9,14 @@ import 'package:provider/provider.dart';
 class DrawerUser extends StatelessWidget {
   final PageController pageController;
   UserProviderModel _model;
+  UserBloc _bloc;
 
   DrawerUser(this.pageController);
 
   @override
   Widget build(BuildContext context) {
     _model = Provider.of<UserProviderModel>(context);
+    _bloc = new UserBloc(_model);
 
     return Drawer(
         child: Column(
@@ -37,7 +41,9 @@ class DrawerUser extends StatelessWidget {
                 ),
                 Text(_model.userData['name'],
                     style: TextStyle(
-                        color: Colors.grey[700], fontWeight: FontWeight.w600, fontSize: 18))
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18))
               ],
             )),
         Divider(
@@ -50,10 +56,11 @@ class DrawerUser extends StatelessWidget {
           child: Column(
             children: <Widget>[
               DrawerTile(FontAwesomeIcons.home, "Início", pageController, 0),
-              DrawerTile(FontAwesomeIcons.comment, "Chat", pageController, 1),
-              DrawerTile(FontAwesomeIcons.question, "Como Funciona?",
-                  pageController, 2),
-              DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 3),
+              DrawerTile(FontAwesomeIcons.question, "Como Funciona",
+                  pageController, 1),
+              DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 2),
+              DrawerTile(
+                  FontAwesomeIcons.envelope, "Contato", pageController, 3),
               DrawerTile(FontAwesomeIcons.fileSignature, "Termos e Condições",
                   pageController, 4),
             ],
@@ -68,7 +75,13 @@ class DrawerUser extends StatelessWidget {
                 style: TextStyle(
                     color: Colors.black, decoration: TextDecoration.underline),
               ),
-              onPressed: () {},
+              onPressed: () {
+
+                _bloc.signout();
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              },
             ),
           ),
         )

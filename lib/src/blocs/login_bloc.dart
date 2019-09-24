@@ -6,11 +6,11 @@ import 'package:contratacao_funcionarios/src/models/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
-enum LoginState { IDLE, LOADING, SUCCESS, FAIL, USER_NOT_VERIFIED}
+enum LoginState { IDLE, LOADING, SUCCESS, FAIL, USER_NOT_VERIFIED }
 
 class LoginBloc extends BlocBase with LoginValidators {
-
   FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isLoggedIn;
 
   //CONTROLLERS
   var _loginController = BehaviorSubject<UserModel>();
@@ -35,12 +35,18 @@ class LoginBloc extends BlocBase with LoginValidators {
     _loginController.stream.listen(_executeLogin);
   }
 
+  void verifyIsLoggedIn() async {
+    FirebaseUser user = await _auth.currentUser();
+
+    this.isLoggedIn = user != null ? true : false;
+  }
 
   void _executeLogin(UserModel user) async {
     _stateController.add(LoginState.LOADING);
 
     AuthResult _userAuth;
     try {
+      await verifyIsLoggedIn();
       _userAuth = await _auth.signInWithEmailAndPassword(
           email: user.email, password: user.senha);
 

@@ -84,12 +84,8 @@ class AccountUserBloc extends BlocBase {
 
       user.userData['profileCompleted'] = true;
 
-      Firestore.instance
-          .collection("users")
-          .document(user.userFirebase.uid)
-          .updateData(user.userData);
-
       if (this.curriculum != null) {
+        user.userData['curriculum'] = p.basename(this.curriculum.path);
         final StorageReference storageRef = FirebaseStorage.instance
             .ref()
             .child(
@@ -99,12 +95,20 @@ class AccountUserBloc extends BlocBase {
           File(this.curriculum.path),
         );
       } else {
-        FirebaseStorage.instance
-            .ref()
-            .child(
-                user.userFirebase.uid + "/" + p.basename(this.curriculum.path))
-            .delete();
+        if (user.userData['curriculum'] != '') {
+          FirebaseStorage.instance
+              .ref()
+              .child(user.userFirebase.uid + "/" + user.userData['curriculum'])
+              .delete();
+        }
+
+        user.userData['curriculum'] = '';
       }
+
+      Firestore.instance
+          .collection("users")
+          .document(user.userFirebase.uid)
+          .updateData(user.userData);
 
       stateController.add(AccountUserState.SUCCESS);
     } catch (e) {
@@ -122,8 +126,6 @@ class AccountUserBloc extends BlocBase {
 
   void deleteCurriculum(UserProviderModel model) {
     curriculum = null;
-
-    model.userData['curriculum'] = '';
 
     _saveAccountDetail(model);
   }

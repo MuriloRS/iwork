@@ -2,6 +2,7 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/subjects.dart';
 
 enum UserState {
@@ -37,6 +38,39 @@ class UserBloc extends BlocBase {
       _model.userData = userData;
       _model.userFirebase = user;
     }
+  }
+
+  String getUserSkills() {
+    return userData['skills']
+        .toString()
+        .trim()
+        .replaceAll(',', ', ')
+        .replaceAll('[', '')
+        .replaceAll(']', '');
+  }
+  
+  
+
+  void signout() async {
+    
+    await FirebaseAuth.instance.signOut();
+  }
+
+  dynamic getCurriculumUser(String curriculumName) async {
+    if (curriculumName == '') {
+      return '';
+    }
+
+    StorageReference reference =
+        FirebaseStorage.instance.ref().child(_user.uid + "/$curriculumName");
+
+    dynamic url;
+
+    try {
+      url = await reference.getDownloadURL();
+    } catch (e) {}
+
+    return url;
   }
 
   verifyEmailConfirmed() async {
