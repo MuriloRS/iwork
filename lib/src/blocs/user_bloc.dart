@@ -19,6 +19,7 @@ class UserBloc extends BlocBase {
   FirebaseUser _user;
   Map userData;
   UserProviderModel _model;
+  bool isLoggedIn;
 
   final _stateController = BehaviorSubject<UserState>();
 
@@ -37,22 +38,22 @@ class UserBloc extends BlocBase {
 
       _model.userData = userData;
       _model.userFirebase = user;
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
     }
   }
 
   String getUserSkills() {
-    return userData['skills']
+    return _model.userData['skills']
         .toString()
         .trim()
         .replaceAll(',', ', ')
         .replaceAll('[', '')
         .replaceAll(']', '');
   }
-  
-  
 
   void signout() async {
-    
     await FirebaseAuth.instance.signOut();
   }
 

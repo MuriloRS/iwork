@@ -29,6 +29,7 @@ class InputField extends StatelessWidget {
         stream: stream,
         builder: (context, snapshot) {
           return FormBuilderTextField(
+            maxLines: type == TextInputType.multiline ? 5 : 1,
             onChanged: onChanged,
             attribute: atribute,
             keyboardType: type,

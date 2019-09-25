@@ -1,4 +1,5 @@
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
+import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/home_user_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/how_works_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/drawer_user.dart';
@@ -27,7 +28,7 @@ class HomeScreenUser extends StatelessWidget {
               drawer: DrawerUser(_pageController),
             ),
             Scaffold(
-              body: HomeUserTab(_pageController),
+              body: ContactTab(),
               drawer: DrawerUser(_pageController),
             ),
           ],

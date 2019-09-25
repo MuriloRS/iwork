@@ -56,7 +56,7 @@ class _LoginPagePageState extends State<LoginPage> {
               return Loader();
             }
 
-            if (_model.userData != null) {
+            if (_model.userData != null && _userBloc.isLoggedIn) {
               if (_model.userData['isCompany'] == true) {
                 return HomeScreenCompany();
               } else {

@@ -151,8 +151,10 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         SizedBox(
                           height: 20,
                         ),
-                        Text("Aceitar trabalho em qualquer horário? ", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey[700]),),
-                        ComboboxButton(
+                        Text("Aceitar trabalho em qualquer horário? ", textAlign: TextAlign.start, style: TextStyle(color: Colors.grey[700], fontSize:16),),
+                        SizedBox(
+                          height: 5,
+                        ),ComboboxButton(
                             options: [
                               DropdownMenuItem(
                                 child: Text('Sim',

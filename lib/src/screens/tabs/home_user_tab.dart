@@ -15,7 +15,7 @@ class HomeUserTab extends StatelessWidget {
     UserProviderModel _model = Provider.of<UserProviderModel>(context);
     UserBloc bloc = UserBloc(_model);
 
-    if (!_model.userData['profileCompleted'] && bloc.isLoggedIn()) {
+    if (!_model.userData['profileCompleted']) {
       return AccountUserTab();
     }
 
