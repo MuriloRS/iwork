@@ -1,6 +1,7 @@
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/login_page.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
+import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,11 +21,13 @@ class MyApp extends StatelessWidget {
         theme: _getThemeData(),
         home: SafeArea(child: Consumer<UserProviderModel>(
           builder: (context, controller, widget) {
-            
             return LoginPage();
           },
         )),
-        routes: {'/accountTab': (context) => Material(child: AccountUserTab())},
+        routes: {
+          '/accountTab': (context) => Material(child: AccountUserTab()),
+          '/contactTab': (context) => Scaffold(body:ContactTab())
+        },
         debugShowCheckedModeBanner: false,
       ),
     );

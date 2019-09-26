@@ -20,6 +20,7 @@ class AccountUserBloc extends BlocBase {
   final nameController = BehaviorSubject<String>();
   final skillsController = BehaviorSubject<String>();
   final citiesController = BehaviorSubject<String>();
+  final telephoneController = BehaviorSubject<String>();
   final curriculumController = BehaviorSubject<String>();
   final saveController = BehaviorSubject<UserProviderModel>();
 
@@ -30,6 +31,7 @@ class AccountUserBloc extends BlocBase {
   Stream<String> get outSkills => skillsController.stream;
   Stream<String> get outCities => citiesController.stream;
   Stream<String> get outCurriculum => curriculumController.stream;
+  Stream<String> get outTelephone => telephoneController.stream;
   Stream<UserProviderModel> get outSave => saveController.stream;
 
   //SINKS
@@ -37,6 +39,7 @@ class AccountUserBloc extends BlocBase {
   Function(String) get changeName => nameController.sink.add;
   Function(String) get changeCities => citiesController.sink.add;
   Function(String) get changeCurriculum => curriculumController.sink.add;
+  Function(String) get changeTelephone => telephoneController.sink.add;
   Sink<UserProviderModel> get changeSave => saveController.sink;
 
   AccountUserBloc() {
@@ -78,6 +81,12 @@ class AccountUserBloc extends BlocBase {
       }
       if (user.userData['city'] == null || user.userData['city'] == '') {
         citiesController.addError("O campo cidade é obrigatório");
+        stateController.add(AccountUserState.FAIL);
+        return;
+      }
+
+      if (user.userData['telephone'] == null || user.userData['telephone'] == '') {
+        telephoneController.addError("O campo telefone é obrigatório");
         stateController.add(AccountUserState.FAIL);
         return;
       }
@@ -141,5 +150,6 @@ class AccountUserBloc extends BlocBase {
     curriculumController.close();
     saveController.close();
     stateCitiesController.close();
+    telephoneController.close();
   }
 }

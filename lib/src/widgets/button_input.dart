@@ -11,10 +11,15 @@ class ButtonInput {
     switch (type) {
       case TYPE_BUTTON.NORMAL:
         return FlatButton(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Text(
             text,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            style: color == COLOR_BUTTON.DEFAULT
+                ? TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600)
+                : TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           color: _getColorButton(color, context),
           textColor: Colors.white,
@@ -35,7 +40,12 @@ class ButtonInput {
               ),
               Text(
                 text,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                style: color == COLOR_BUTTON.DEFAULT
+                    ? TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600)
+                    : TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               )
             ],
           ),
@@ -51,7 +61,12 @@ class ButtonInput {
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Text(
               text,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: color == COLOR_BUTTON.DEFAULT
+                  ? TextStyle(
+                      color: Colors.grey[800],
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600)
+                  : TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             onPressed: () {
               buttonFunction();

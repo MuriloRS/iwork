@@ -14,7 +14,7 @@ class ComboboxButton extends StatefulWidget {
 }
 
 class _DropdownState extends State<ComboboxButton> {
-  String selected;
+  String selected = 'Sim';
   @override
   Widget build(BuildContext context) {
     

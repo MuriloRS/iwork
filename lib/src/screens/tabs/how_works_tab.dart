@@ -1,4 +1,7 @@
+import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
+import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
+import 'package:contratacao_funcionarios/src/widgets/navigator_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -74,10 +77,12 @@ class HowWorksTab extends StatelessWidget {
                 SizedBox(
                   height: 25,
                 ),
-                CupertinoButton(
-                  color: Theme.of(context).accentColor,
-                  child: Text("Contato", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),),
-                  onPressed: () {},
+                Container(
+                  width: double.infinity,
+                  child: ButtonInput.getButton(
+                      TYPE_BUTTON.NORMAL, COLOR_BUTTON.DEFAULT, 'Contato', () {
+                    Navigator.pushNamed(context, '/contactTab');
+                  }, context, null),
                 )
               ],
             )),
