@@ -29,6 +29,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
       new GlobalKey();
   AccountUserBloc _bloc;
   UserProviderModel _model;
+
   UserBloc _userBloc;
 
   @override
@@ -39,6 +40,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
     _telephoneController = TextEditingController();
 
     _model = Provider.of<UserProviderModel>(context);
+
     _bloc = AccountUserBloc();
     _userBloc = UserBloc(_model);
 
@@ -215,10 +217,10 @@ class _AccountUserTabState extends State<AccountUserTab> {
                       return Container(
                         width: double.infinity,
                         child: ButtonInput.getButton(
-                            TYPE_BUTTON.IMAGE, COLOR_BUTTON.HINT, 'Salvar',
-                            () {
+                            TYPE_BUTTON.IMAGE, COLOR_BUTTON.HINT, 'Salvar', () {
                           _model.userData['name'] = _nomeInputController.text;
-                          _model.userData['telephone'] = _telephoneController.text;
+                          _model.userData['telephone'] =
+                              _telephoneController.text;
 
                           _model.userData['skills'] = _skillsInputController
                               .text

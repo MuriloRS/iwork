@@ -53,7 +53,7 @@ class _AutoCompleteInputState extends State<AutoCompleteInput> {
             errorBorder: OutlineInputBorder(
                 borderSide: new BorderSide(color: Colors.red)),
             helperStyle: TextStyle(color: Colors.black),
-            errorText: snapshot.hasError ? snapshot.error : null,
+            errorText: !snapshot.hasError ? snapshot.error : null,
             filled: true,
             fillColor: widget.options == null
                 ? Color.fromRGBO(230, 230, 230, 1)

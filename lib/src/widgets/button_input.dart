@@ -58,7 +58,9 @@ class ButtonInput {
         break;
       case TYPE_BUTTON.OUTLINE:
         return FlatButton(
-            padding: EdgeInsets.symmetric(vertical: 10),
+
+            color: _getColorButton(color, context),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text(
               text,
               style: color == COLOR_BUTTON.DEFAULT

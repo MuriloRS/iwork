@@ -12,6 +12,7 @@ class CustomSliverAppbar extends StatelessWidget {
         title,
         style: TextStyle(color: Theme.of(context).primaryColor),
       ),
+      actionsIconTheme: IconThemeData(color: Colors.black),
       centerTitle: true,
       floating: true,
       backgroundColor: Colors.white,

@@ -267,11 +267,17 @@ class _LoginPagePageState extends State<LoginPage> {
   }
 
   void _listenOutState() {
-    _loginBloc.outState.listen((state) {
+    _loginBloc.outState.listen((state) async{
       switch (state) {
         case LoginState.SUCCESS:
-          Navigator.of(context)
-              .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));
+          await _userBloc.currentUser();
+          if (_model.userData['isCompany']) {
+            Navigator.of(context).pushReplacement(
+                NavigatorAnimation(widget: HomeScreenCompany()));
+          } else {
+            Navigator.of(context)
+                .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));
+          }
           break;
         case LoginState.USER_NOT_VERIFIED:
           Navigator.of(context).pushReplacement(NavigatorAnimation(

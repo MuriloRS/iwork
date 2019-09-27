@@ -16,7 +16,6 @@ class EmailConfirmationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     model = Provider.of<UserProviderModel>(context);
 
     _userBloc = UserBloc(model);
@@ -26,26 +25,27 @@ class EmailConfirmationScreen extends StatelessWidget {
             child: StreamBuilder(
       stream: _userBloc.outState,
       builder: (context, AsyncSnapshot<UserState> snapshot) {
-        switch (snapshot.data) {
-          case UserState.LOADING:
-            return Loader();
-            break;
-          case UserState.USER_VERIFIED:
-            if (typeUser == 1) {
-              return HomeScreenUser();
-            } else {
-              return HomeScreenCompany();
-            }
+          switch (snapshot.data) {
+            case UserState.LOADING:
+              return Loader();
+              break;
+            case UserState.USER_VERIFIED:
+              if (typeUser == 1) {
+                return HomeScreenUser();
+              } else {
+                return HomeScreenCompany();
+              }
 
-            break;
-          case UserState.SUCCESS:
-            return SnackBar(
-              content: Text("Email enviado"),
-              duration: Duration(seconds: 5),
-            );
-          default:
-            return _buildBody(context);
-        }
+              break;
+            case UserState.SUCCESS:
+              return SnackBar(
+                content: Text("Email enviado"),
+                duration: Duration(seconds: 5),
+              );
+            default:
+              return _buildBody(context);
+          }
+        
       },
     )));
   }
@@ -89,8 +89,8 @@ class EmailConfirmationScreen extends StatelessWidget {
                   color: Colors.green),
             ),
             color: Colors.grey[200],
-            onPressed: () {
-              model.userFirebase.reload();
+            onPressed: () async {
+              await model.userFirebase.reload();
               _userBloc.verifyEmailConfirmed();
             },
           )

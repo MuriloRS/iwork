@@ -26,7 +26,7 @@ class AccountUserBloc extends BlocBase {
 
   //STREAMS
   Stream<AccountUserState> get outState => stateController.stream;
-  Stream<AccountUserState> get outStateCities => stateController.stream;
+  Stream<AccountUserState> get outStateCities => stateCitiesController.stream;
   Stream<String> get outName => nameController.stream;
   Stream<String> get outSkills => skillsController.stream;
   Stream<String> get outCities => citiesController.stream;
@@ -85,12 +85,15 @@ class AccountUserBloc extends BlocBase {
         return;
       }
 
-      if (user.userData['telephone'] == null || user.userData['telephone'] == '') {
-        telephoneController.addError("O campo telefone é obrigatório");
-        stateController.add(AccountUserState.FAIL);
-        return;
+//Se for usuário comum então o telefone é obrigatório
+      if (!user.userData['isCompany']) {
+        if (user.userData['telephone'] == null ||
+            user.userData['telephone'] == '') {
+          telephoneController.addError("O campo telefone é obrigatório");
+          stateController.add(AccountUserState.FAIL);
+          return;
+        }
       }
-
       user.userData['profileCompleted'] = true;
 
       if (this.curriculum != null) {
@@ -104,7 +107,7 @@ class AccountUserBloc extends BlocBase {
           File(this.curriculum.path),
         );
       } else {
-        if (user.userData['curriculum'] != '') {
+        if (user.userData['curriculum'] != '' && !user.userData['isCompany']) {
           FirebaseStorage.instance
               .ref()
               .child(user.userFirebase.uid + "/" + user.userData['curriculum'])

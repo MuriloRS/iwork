@@ -49,7 +49,7 @@ class SignupUserBloc extends BlocBase {
         _model.notifyListeners();
 
       } catch (e) {
-        if (e.code == "ERROR_EMAIL_ALREADY_IN_USE") {
+        if (e.code.toString() == "ERROR_EMAIL_ALREADY_IN_USE") {
           _emailController.addError("Esse email já está sendo usado.");
         }
 
