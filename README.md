@@ -2,15 +2,9 @@
 
 Um projeto pessoal feito em Flutter e Firebase, é um aplicativo para contratação de funcionários temporários, está em fase de desenvolvimento.
 
-## Getting Started
+- [ ] Arrumar bug quando faço logout (a tela de login fica 'piscando')
+- [ ] Tela inicial da empresa para encontrar funcionário, terá um filtro também.
+- [ ] Tela de termos e condições
+- [ ] Tela de conta da empresa e usuário não mostra loader carregando quando salva.
+- [ ] Chat com os funcionários escolhidos pela empresa ou estabelecimento, pode mandar proposta, e depois finalizar, quando as duas partes finalizarem ele se avaliam, essa avaliação ficará salvo no histórico profissional deles.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
