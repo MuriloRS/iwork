@@ -19,14 +19,14 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Contratação de Funcionários',
         theme: _getThemeData(),
-        home: SafeArea(child: Consumer<UserProviderModel>(
+        home: Consumer<UserProviderModel>(
           builder: (context, controller, widget) {
             return LoginPage();
           },
-        )),
+        ),
         routes: {
           '/accountTab': (context) => Material(child: AccountUserTab()),
-          '/contactTab': (context) => Scaffold(body:ContactTab())
+          '/contactTab': (context) => Scaffold(body: ContactTab())
         },
         debugShowCheckedModeBanner: false,
       ),
@@ -34,16 +34,35 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _getThemeData() {
-    Color primary = Color.fromRGBO(20, 33, 61, 1);
+    Color primary = Color.fromRGBO(30, 32, 36, 1);
+    Color accent = Color.fromRGBO(230, 225, 41, 1);
 
     return ThemeData(
         primaryColor: primary,
-        accentColor: Color.fromRGBO(252, 163, 17, 1),
+        accentColor: accent,
         backgroundColor: Colors.white,
         buttonColor: Color.fromRGBO(20, 33, 61, 1),
-        errorColor: Color.fromRGBO(245, 0, 25, 1),
-        scaffoldBackgroundColor: Colors.white,
-        hintColor: Color.fromRGBO(221, 28, 26, 1),
+        errorColor: Color.fromRGBO(209, 0, 0, 1),
+        scaffoldBackgroundColor: primary,
+        cardColor: Color.fromRGBO(241, 241, 241, 1),
+        primaryColorLight: Color.fromRGBO(45, 47, 51, 1),
+        hintColor: Color.fromRGBO(22, 25, 50, 1),
+        buttonTheme: ButtonThemeData(
+          buttonColor: accent,
+          highlightColor: primary,
+          textTheme: ButtonTextTheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        ),
+        primaryTextTheme: TextTheme(
+            subtitle: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.w600, color: accent),
+            title: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: Color.fromRGBO(241, 241, 241, 1))),
         accentTextTheme: TextTheme(
           title: TextStyle(
               fontSize: 28, color: primary, fontWeight: FontWeight.w700),

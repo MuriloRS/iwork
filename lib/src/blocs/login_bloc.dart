@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_model.dart';
-import 'package:contratacao_funcionarios/src/models/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum LoginState { IDLE, LOADING, SUCCESS, FAIL, USER_NOT_VERIFIED }
 
-class LoginBloc extends BlocBase with LoginValidators {
+class LoginBloc extends BlocBase {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   //CONTROLLERS
@@ -21,10 +19,8 @@ class LoginBloc extends BlocBase with LoginValidators {
   //STREAMS
   Stream<UserModel> get outLogin => _loginController.stream;
   Stream<LoginState> get outState => _stateController.stream;
-  Stream<String> get outEmail =>
-      _emailController.stream.transform(validateEmail);
-  Stream<String> get outPassword =>
-      _passwordController.stream.transform(validatePassword);
+  Stream<String> get outEmail => _emailController.stream;
+  Stream<String> get outPassword => _passwordController.stream;
 
   //SINKS
   Sink<UserModel> get doLogin => _loginController.sink;
@@ -42,6 +38,7 @@ class LoginBloc extends BlocBase with LoginValidators {
     try {
       _userAuth = await _auth.signInWithEmailAndPassword(
           email: user.email, password: user.senha);
+          
 
       _stateController.add(LoginState.SUCCESS);
     } catch (e) {

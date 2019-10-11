@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:contratacao_funcionarios/src/models/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum RecoverPasswordState { IDLE, LOADING, SUCCESS, FAIL }
 
-class RecoverPasswordBloc extends BlocBase with LoginValidators {
+class RecoverPasswordBloc extends BlocBase {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   //CONTROLLERS
@@ -17,8 +16,7 @@ class RecoverPasswordBloc extends BlocBase with LoginValidators {
   //STREAMS
   Stream<String> get outLogin => _recoverPasswordController.stream;
   Stream<RecoverPasswordState> get outState => _stateController.stream;
-  Stream<String> get outEmail =>
-      _emailController.stream.transform(validateEmail);
+  Stream<String> get outEmail => _emailController.stream;
 
   //SINKS
   Sink<String> get doRecoverPassword => _recoverPasswordController.sink;
@@ -36,7 +34,7 @@ class RecoverPasswordBloc extends BlocBase with LoginValidators {
 
       _stateController.add(RecoverPasswordState.SUCCESS);
     } catch (e) {
-       _emailController.addError("Email inválido");
+      _emailController.addError("Email inválido");
       _stateController.add(RecoverPasswordState.FAIL);
     }
   }

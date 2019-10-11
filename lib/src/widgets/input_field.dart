@@ -60,15 +60,11 @@ InputDecoration _getInputDecoration(
           focusedBorder: OutlineInputBorder(
             borderSide:
                 new BorderSide(color: const Color.fromRGBO(230, 230, 230, 1)),
-            borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(3),
-                bottomLeft: Radius.circular(3)),
+            
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: new BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(3),
-                bottomLeft: Radius.circular(3)),
+            borderRadius: BorderRadius.all(Radius.circular(3)),
           ),
         )
       : InputDecoration(

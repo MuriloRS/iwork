@@ -1,3 +1,4 @@
+import 'package:contratacao_funcionarios/main.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/login_page.dart';
@@ -8,21 +9,22 @@ import 'package:provider/provider.dart';
 
 class DrawerUser extends StatelessWidget {
   final PageController pageController;
-  UserProviderModel _model;
-  UserBloc _bloc;
 
   DrawerUser(this.pageController);
 
   @override
   Widget build(BuildContext context) {
+    UserProviderModel _model;
+    UserBloc _bloc;
     _model = Provider.of<UserProviderModel>(context);
     _bloc = new UserBloc(_model);
 
-    return Drawer(
-        child: Column(
+    return SafeArea(
+        child: Drawer(
+            child: Column(
       children: <Widget>[
         Container(
-            color: Colors.white,
+            color: Theme.of(context).accentColor,
             height: 120.0,
             width: double.infinity,
             padding: EdgeInsets.only(right: 25, left: 25, top: 25, bottom: 10),
@@ -41,20 +43,19 @@ class DrawerUser extends StatelessWidget {
                 ),
                 Text(_model.userData['name'],
                     style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[900],
+                        fontWeight: FontWeight.w400,
                         fontSize: 18))
               ],
             )),
-        Divider(
-          height: 1,
-          color: Colors.grey[400],
-        ),
-        SizedBox(height: 15),
         Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
           padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
           child: Column(
             children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
               DrawerTile(FontAwesomeIcons.home, "Início", pageController, 0),
               DrawerTile(FontAwesomeIcons.question, "Como Funciona",
                   pageController, 1),
@@ -67,25 +68,27 @@ class DrawerUser extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: FlatButton(
-              child: Text(
-                "Sair",
-                style: TextStyle(
-                    color: Colors.black, decoration: TextDecoration.underline),
-              ),
-              onPressed: () {
+          child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: FlatButton(
+                  child: Text(
+                    "Sair",
+                    style: TextStyle(
+                        color: Colors.white,
+                        decoration: TextDecoration.underline),
+                  ),
+                  onPressed: () {
+                    _bloc.signout();
 
-                _bloc.signout();
-
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              },
-            ),
-          ),
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MyApp()));
+                  },
+                ),
+              )),
         )
       ],
-    ));
+    )));
   }
 }

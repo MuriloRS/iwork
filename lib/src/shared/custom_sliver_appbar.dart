@@ -10,16 +10,22 @@ class CustomSliverAppbar extends StatelessWidget {
     return SliverAppBar(
       title: Text(
         title,
-        style: TextStyle(color: Theme.of(context).primaryColor),
+        style: TextStyle(color: Theme.of(context).cardColor, fontSize: 24),
       ),
-      actionsIconTheme: IconThemeData(color: Colors.black),
+      bottom: PreferredSize(
+          child: Container(
+            color: Colors.grey[400],
+            height: 1.0,
+          ),
+          preferredSize: Size.fromHeight(4.0)),
+      actionsIconTheme: IconThemeData(color: Theme.of(context).cardColor),
       centerTitle: true,
       floating: true,
-      backgroundColor: Colors.white,
-      iconTheme:
-          new IconThemeData(color: Theme.of(context).primaryColor, size: 26),
-      elevation: 5.0,
+      elevation: 3,
       forceElevated: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      iconTheme:
+          new IconThemeData(color: Theme.of(context).cardColor, size: 24),
       snap: true,
     );
   }

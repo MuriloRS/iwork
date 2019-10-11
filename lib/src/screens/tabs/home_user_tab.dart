@@ -1,4 +1,3 @@
-import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
@@ -15,7 +14,6 @@ class HomeUserTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserProviderModel _model = Provider.of<UserProviderModel>(context);
-    UserBloc bloc = UserBloc(_model);
 
     if (!_model.userData['profileCompleted']) {
       return AccountUserTab();
@@ -26,6 +24,7 @@ class HomeUserTab extends StatelessWidget {
       CustomSliverAppbar("Início"),
       SliverToBoxAdapter(
         child: Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(
             children: <Widget>[
@@ -35,7 +34,7 @@ class HomeUserTab extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor),
+                    color: Theme.of(context).cardColor),
               ),
               SizedBox(
                 height: 10,
@@ -68,12 +67,15 @@ class HomeUserTab extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text('Avaliação média: ', style: TextStyle(fontSize: 16),),
+                            Text(
+                              'Avaliação média: ',
+                              style: TextStyle(fontSize: 16),
+                            ),
                             RatingBar(
                               initialRating: 4.5,
                               direction: Axis.horizontal,
                               allowHalfRating: true,
-                              itemSize: 16,
+                              itemSize: 18,
                               itemCount: 5,
                               itemPadding:
                                   EdgeInsets.symmetric(horizontal: 1.0),
@@ -95,13 +97,13 @@ class HomeUserTab extends StatelessWidget {
                 height: 20,
               ),
               Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
                   height: MediaQuery.of(context).size.height - 310,
                   child: ListView.separated(
                     itemCount: 6,
                     separatorBuilder: (context, i) {
-                      return Divider(
-                        height: 1,
-                        color: Colors.grey[400],
+                      return SizedBox(
+                        height: 5,
                       );
                     },
                     itemBuilder: (context, i) {
@@ -110,7 +112,6 @@ class HomeUserTab extends StatelessWidget {
                   ))
             ],
           ),
-          color: Colors.white,
         ),
       )
     ]));
