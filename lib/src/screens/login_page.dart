@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class LoginPage extends StatelessWidget {
   static final GlobalKey<FormBuilderState> _fbKey =
@@ -266,35 +267,32 @@ class LoginPage extends StatelessWidget {
                         SizedBox(
                           height: 20,
                         ),
-                        Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: Container(
-                            
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text("Ainda não tem uma conta?",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 15, color: Theme.of(context).cardColor)),
-                                FlatButton(
-                                  color: Theme.of(context).cardColor,
-                                  child: Text(
-                                    "Cadastrar",
-                                    style: TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        fontSize: 14.0,
-                                        color: Theme.of(context).errorColor),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        NavigatorAnimation(
-                                            widget: CadastroClientePage()));
-                                  },
-                                  highlightColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
+                        Container(
+
+                          child: Column(
+                            children: <Widget>[
+                              Text("Ainda não tem uma conta?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Theme.of(context).cardColor)),
+                              FlatButton(
+                                color: Theme.of(context).primaryColorLight,
+                                child: Text(
+                                  "Cadastrar",
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 14.0,
+                                      color: Theme.of(context).hintColor),
                                 ),
-                              ],
-                            ),
+                                onPressed: () {
+                                  Navigator.of(context).push(NavigatorAnimation(
+                                      widget: CadastroClientePage()));
+                                },
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                              ),
+                            ],
                           ),
                         ),
                       ],

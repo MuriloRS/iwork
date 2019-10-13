@@ -16,10 +16,10 @@ class ButtonInput {
             text,
             style: color == COLOR_BUTTON.DEFAULT
                 ? TextStyle(
-                    color: Colors.grey[800],
+                    color: Theme.of(context).accentColor,
                     fontSize: 20,
                     fontWeight: FontWeight.w600)
-                : TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                : TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Theme.of(context).primaryColor),
           ),
           color: _getColorButton(color, context),
           textColor: Colors.white,
@@ -42,10 +42,13 @@ class ButtonInput {
                 text,
                 style: color == COLOR_BUTTON.DEFAULT
                     ? TextStyle(
-                        color: Colors.grey[800],
+                        color: Theme.of(context).primaryColor,
                         fontSize: 20,
                         fontWeight: FontWeight.w600)
-                    : TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    : TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).primaryColor),
               )
             ],
           ),
@@ -58,7 +61,6 @@ class ButtonInput {
         break;
       case TYPE_BUTTON.OUTLINE:
         return FlatButton(
-
             color: _getColorButton(color, context),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text(
@@ -83,7 +85,7 @@ class ButtonInput {
   static Color _getColorButton(color, context) {
     switch (color) {
       case COLOR_BUTTON.PRIMARY:
-        return Theme.of(context).primaryColor;
+        return Theme.of(context).accentColor;
         break;
       case COLOR_BUTTON.ACCENT:
         return Theme.of(context).accentColor;

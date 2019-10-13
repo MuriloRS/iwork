@@ -31,7 +31,8 @@ class ContactTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text("Assunto",
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                    style: TextStyle(
+                        fontSize: 18, color: Theme.of(context).cardColor)),
                 SizedBox(
                   height: 5,
                 ),
@@ -52,7 +53,8 @@ class ContactTab extends StatelessWidget {
                   height: 20,
                 ),
                 Text("Descrição",
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                    style: TextStyle(
+                        fontSize: 18, color: Theme.of(context).cardColor)),
                 SizedBox(
                   height: 5,
                 ),
@@ -70,7 +72,7 @@ class ContactTab extends StatelessWidget {
                     'email',
                     false),
                 SizedBox(
-                  height: 15,
+                  height: 25,
                 ),
                 StreamBuilder(
                   stream: bloc.emailController,
@@ -107,6 +109,7 @@ class ContactTab extends StatelessWidget {
                             Icon(
                               FontAwesomeIcons.paperPlane,
                               size: 18,
+                              color: Theme.of(context).primaryColor,
                             ));
                     }
                   },

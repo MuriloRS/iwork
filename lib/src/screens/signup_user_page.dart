@@ -81,7 +81,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
             style: TextStyle(
                 decoration: TextDecoration.underline,
                 fontSize: 16,
-                color: Theme.of(context).hintColor),
+                color: Theme.of(context).cardColor),
           ),
           onPressed: () {
             Navigator.push(
@@ -122,7 +122,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
             ),
             _buildTextBuildPasswordRep(_passRepController),
             SizedBox(
-              height: 50,
+              height: 30,
             ),
             StreamBuilder(
               stream: _userBloc.outState,
@@ -311,14 +311,15 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   FormBuilderTextField _buildTextBuildPasswordRep(TextEditingController key) {
     return FormBuilderTextField(
       autofocus: false,
-      attribute: "Confirmar Senha",
+      attribute: "Repetir Senha",
       controller: key,
       keyboardType: TextInputType.text,
       obscureText: true,
       decoration: new InputDecoration(
         helperStyle: TextStyle(color: Colors.black),
+        filled: true,
         fillColor: Color.fromRGBO(255, 255, 255, 1),
-        hintText: 'Confirmar Senha',
+        hintText: 'Repetir Senha',
         hintStyle: TextStyle(color: Colors.grey[600]),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -346,15 +347,15 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   Widget _buildButtonSignup() {
     return Container(
       child: FlatButton(
+        color: Colors.black,
         padding: EdgeInsets.all(10),
         child: Text(
           'Cadastrar',
           style: TextStyle(
               fontSize: 22,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).hintColor,
               fontWeight: FontWeight.w600),
         ),
-        color: Theme.of(context).primaryColor,
         onPressed: () {
           UserModel user = new UserModel(
               cpf: _cpfController.text,

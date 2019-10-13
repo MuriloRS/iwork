@@ -1,7 +1,5 @@
-import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
-import 'package:contratacao_funcionarios/src/widgets/navigator_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +11,7 @@ class HowWorksTab extends StatelessWidget {
       CustomSliverAppbar("Como funciona"),
       SliverToBoxAdapter(
         child: Container(
+
             padding: EdgeInsets.all(16),
             child: Column(
               children: <Widget>[
@@ -24,22 +23,22 @@ class HowWorksTab extends StatelessWidget {
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 20,
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).accentColor,
                       fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
                   height: 16,
                 ),
                 Text(
-                  "Preencha seu cadastro com suas informações pessoais, quando você tiver completado o cadastro seu perfil será exibido para as empresas e estabelecimentos interessados em um profissional com sua qualificação.",
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
+                    "Preencha seu cadastro com suas informações pessoais, quando você tiver completado o cadastro seu perfil será exibido para as empresas e estabelecimentos interessados em um profissional com sua qualificação.",
+                    style: TextStyle(color: Colors.grey[400]),
+                    textAlign: TextAlign.center),
                 SizedBox(
                   height: 20,
                 ),
                 Divider(
                   height: 1,
-                  color: Colors.grey[400],
+                  color: Colors.grey[300],
                 ),
                 SizedBox(
                   height: 20,
@@ -49,7 +48,7 @@ class HowWorksTab extends StatelessWidget {
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 20,
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).accentColor,
                       fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
@@ -57,7 +56,8 @@ class HowWorksTab extends StatelessWidget {
                 ),
                 Text(
                   "A cada trabalho finalizado seu histórico profissional e avaliação serão atualizados, dessa forma o contratante tem certeza que está contratando alguém confiável e qualificado.",
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: Colors.grey[400]),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(
                   height: 20,
@@ -72,7 +72,7 @@ class HowWorksTab extends StatelessWidget {
                 Text(
                   "Qualquer dúvida nos envie uma mensagem que iremos tirar sua dúvida.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                  style: TextStyle(color: Colors.grey[300], fontSize: 16),
                 ),
                 SizedBox(
                   height: 25,
@@ -80,7 +80,7 @@ class HowWorksTab extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   child: ButtonInput.getButton(
-                      TYPE_BUTTON.NORMAL, COLOR_BUTTON.DEFAULT, 'Contato', () {
+                      TYPE_BUTTON.NORMAL, COLOR_BUTTON.ACCENT, 'Contato', () {
                     Navigator.pushNamed(context, '/contactTab');
                   }, context, null),
                 )

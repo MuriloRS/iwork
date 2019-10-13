@@ -16,7 +16,6 @@ class SignupCompanyPage extends StatefulWidget {
 }
 
 class _SignupCompanyPageState extends State<SignupCompanyPage> {
-
   static final GlobalKey<FormBuilderState> _fbProfessional =
       GlobalKey<FormBuilderState>();
 
@@ -95,7 +94,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
     );
   }
 
-  void _listenOutState(){
+  void _listenOutState() {
     _userBloc.outState.listen((state) {
       switch (state) {
         case SignupState.SUCCESS:
@@ -119,6 +118,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
   Widget _buildButtonSignup() {
     return Container(
       child: FlatButton(
+        color: Colors.black,
         padding: EdgeInsets.all(10),
         child: Text(
           'Cadastrar',
@@ -127,7 +127,6 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
               color: Theme.of(context).accentColor,
               fontWeight: FontWeight.w600),
         ),
-        color: Theme.of(context).primaryColor,
         onPressed: () {
           UserCompanyModel user = new UserCompanyModel(
               cnpj: _cnpjController.text,
@@ -161,6 +160,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
       obscureText: true,
       decoration: new InputDecoration(
         helperStyle: TextStyle(color: Colors.black),
+        filled: true,
         fillColor: Color.fromRGBO(255, 255, 255, 1),
         hintText: 'Confirmar Senha',
         hintStyle: TextStyle(color: Colors.grey[600]),

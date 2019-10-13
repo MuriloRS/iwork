@@ -173,7 +173,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                     Text(
                       "Aceitar trabalho em qualquer horário? ",
                       textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                      style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16),
                     ),
                     SizedBox(
                       height: 5,
@@ -217,7 +217,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                       return Container(
                         width: double.infinity,
                         child: ButtonInput.getButton(
-                            TYPE_BUTTON.IMAGE, COLOR_BUTTON.HINT, 'Salvar', () {
+                            TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar', () {
                           _model.userData['name'] = _nomeInputController.text;
                           _model.userData['telephone'] =
                               _telephoneController.text;
@@ -228,7 +228,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                               .split(",");
 
                           _bloc.saveController.add(_model);
-                        }, context, Icon(FontAwesomeIcons.save)),
+                        }, context, Icon(FontAwesomeIcons.save, color: Theme.of(context).primaryColor)),
                       );
                   }
                 },

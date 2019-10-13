@@ -28,14 +28,7 @@ class HomeUserTab extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(
             children: <Widget>[
-              Text(
-                "Perfil",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).cardColor),
-              ),
+              
               SizedBox(
                 height: 10,
               ),
