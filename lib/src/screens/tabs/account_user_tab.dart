@@ -42,13 +42,14 @@ class _AccountUserTabState extends State<AccountUserTab> {
     _model = Provider.of<UserProviderModel>(context);
 
     _bloc = AccountUserBloc();
-    _userBloc = UserBloc(_model);
+    _userBloc = UserBloc();
 
     String _selectedLocation;
 
     _emailInputController.text = _model.userFirebase.email;
     _nomeInputController.text = _model.userData['name'];
-    _skillsInputController.text = _userBloc.getUserSkills().trim();
+    _skillsInputController.text =
+        _userBloc.getUserSkills(_model.userData).trim();
     _telephoneController.text = _model.userData['telephone'];
 
     _listenOutState();
@@ -173,7 +174,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                     Text(
                       "Aceitar trabalho em qualquer horário? ",
                       textAlign: TextAlign.start,
-                      style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16),
+                      style: TextStyle(
+                          color: Theme.of(context).cardColor, fontSize: 16),
                     ),
                     SizedBox(
                       height: 5,
@@ -217,7 +219,8 @@ class _AccountUserTabState extends State<AccountUserTab> {
                       return Container(
                         width: double.infinity,
                         child: ButtonInput.getButton(
-                            TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar', () {
+                            TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar',
+                            () {
                           _model.userData['name'] = _nomeInputController.text;
                           _model.userData['telephone'] =
                               _telephoneController.text;
@@ -228,7 +231,11 @@ class _AccountUserTabState extends State<AccountUserTab> {
                               .split(",");
 
                           _bloc.saveController.add(_model);
-                        }, context, Icon(FontAwesomeIcons.save, color: Theme.of(context).primaryColor)),
+                        },
+                            context,
+                            Icon(FontAwesomeIcons.save,
+                                color: Theme.of(context).primaryColor),
+                            20),
                       );
                   }
                 },

@@ -10,58 +10,42 @@ import 'package:contratacao_funcionarios/src/screens/user_screens/home_screen_us
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:contratacao_funcionarios/src/widgets/navigator_animation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
-class LoginPage extends StatelessWidget {
-  static final GlobalKey<FormBuilderState> _fbKey =
+class LoginPage extends StatefulWidget {
+  static final GlobalKey<FormBuilderState> fbKey =
       GlobalKey<FormBuilderState>();
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  LoginBloc _loginBloc = LoginBloc();
+  UserBloc _userBloc = UserBloc();
+  UserProviderModel _model;
   TextEditingController _emailController;
   TextEditingController _senhaController;
-  LoginBloc _loginBloc = LoginBloc();
-  UserBloc _userBloc;
-  UserProviderModel _model;
+  Future<Map<String, dynamic>> futureCurrentUser;
+
+  @override
+  void initState() {
+    super.initState();
+
+    futureCurrentUser = _userBloc.currentUser();
+  }
 
   @override
   Widget build(BuildContext context) {
     _emailController = new TextEditingController();
     _senhaController = new TextEditingController();
     _model = Provider.of<UserProviderModel>(context);
-    _userBloc = UserBloc(_model);
 
-    void _listenState() {
-      _loginBloc.outState.listen((state) async {
-        switch (state) {
-          case LoginState.SUCCESS:
-            await _userBloc.currentUser();
-
-            if (_model.userData['isCompany']) {
-              Navigator.of(context)
-                  .push(NavigatorAnimation(widget: HomeScreenCompany()));
-            } else {
-              Navigator.of(context)
-                  .push(NavigatorAnimation(widget: HomeScreenUser()));
-            }
-
-            break;
-          case LoginState.USER_NOT_VERIFIED:
-            Navigator.of(context).pushReplacement(NavigatorAnimation(
-                widget: EmailConfirmationScreen(
-              typeUser: _userBloc.userData['isCompany'],
-            )));
-            break;
-          default:
-            return Container();
-        }
-
-        return Container();
-      });
-    }
-
-    Widget _getButtonLogin(_fbKey) {
+    Widget _getButtonLogin() {
       return FlatButton(
         child: Text(
           "ENTRAR",
@@ -73,27 +57,32 @@ class LoginPage extends StatelessWidget {
         padding: EdgeInsets.all(10),
         color: Theme.of(context).accentColor,
         onPressed: () {
-          _fbKey.currentState.validate();
+          if (LoginPage.fbKey.currentState.validate()) {
+            UserModel user = new UserModel(
+                email: LoginPage.fbKey.currentState.fields['Emaile'].currentState.value, senha: LoginPage.fbKey.currentState.fields['Senhae'].currentState.value);
 
-          UserModel user = new UserModel(
-              email: _emailController.text, senha: _senhaController.text);
+            _listenState();
 
-          _loginBloc.doLogin.add(user);
+            _loginBloc.doLogin.add(user);
+          }
         },
       );
     }
 
-    _listenState();
-
     return Scaffold(
         body: FutureBuilder(
-      future: _userBloc.currentUser(),
-      builder: (context, AsyncSnapshot<void> snapshot) {
+      future: futureCurrentUser,
+      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
           return Loader();
         }
-
+        _model.userData = snapshot.data;
+        if (snapshot.data == null) {
+          _userBloc.isLoggedIn = false;
+        } else {
+          _userBloc.isLoggedIn = true;
+        }
         if (_model.userData != null && _userBloc.isLoggedIn) {
           if (_model.userData['isCompany'] == true) {
             return HomeScreenCompany();
@@ -102,7 +91,7 @@ class LoginPage extends StatelessWidget {
           }
         } else {
           return FormBuilder(
-            key: _fbKey,
+            key: LoginPage.fbKey,
             child: SingleChildScrollView(
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
@@ -167,21 +156,11 @@ class LoginPage extends StatelessWidget {
                                 case LoginState.IDLE:
                                   return Container();
                                   break;
-                                case LoginState.SUCCESS:
-                                  _userBloc.currentUser();
-
-                                  Future.delayed(Duration(milliseconds: 50));
-                                  Navigator.pop(context);
-                                  if (_model.userData['isCompany']) {
-                                    return HomeScreenCompany();
-                                  } else {
-                                    return HomeScreenUser();
-                                  }
-                                  break;
+                                
                                 case LoginState.LOADING:
                                   return Loader();
                                 default:
-                                  return _getButtonLogin(_fbKey);
+                                  return _getButtonLogin();
                               }
                             },
                           ),
@@ -268,7 +247,6 @@ class LoginPage extends StatelessWidget {
                           height: 20,
                         ),
                         Container(
-
                           child: Column(
                             children: <Widget>[
                               Text("Ainda não tem uma conta?",
@@ -301,5 +279,35 @@ class LoginPage extends StatelessWidget {
         }
       },
     ));
+  }
+
+  void _listenState() {
+    _loginBloc.outState.listen((state) async {
+      switch (state) {
+        case LoginState.SUCCESS:
+          _model.userData = await _userBloc.currentUser();
+          _model.userFirebase = await FirebaseAuth.instance.currentUser();
+
+          if (_model.userData['isCompany']) {
+            Navigator.of(context)
+                .pushReplacement(NavigatorAnimation(widget: HomeScreenCompany()));
+          } else {
+            Navigator.of(context)
+                .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));
+          }
+
+          break;
+        case LoginState.USER_NOT_VERIFIED:
+          Navigator.of(context).pushReplacement(NavigatorAnimation(
+              widget: EmailConfirmationScreen(
+            typeUser: _userBloc.userData['isCompany'],
+          )));
+          break;
+        default:
+          return Container();
+      }
+
+      return Container();
+    });
   }
 }

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 
   ThemeData _getThemeData() {
     Color primary = Color.fromRGBO(30, 32, 36, 1);
-    Color accent = Color.fromRGBO(230, 226, 59, 1);
+    Color accent = Color.fromRGBO(4, 231, 98, 1);
 
     return ThemeData(
         primaryColor: primary,
@@ -46,7 +46,8 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: primary,
         cardColor: Color.fromRGBO(241, 241, 241, 1),
         primaryColorLight: Color.fromRGBO(45, 47, 51, 1),
-        hintColor: Color.fromRGBO(4, 231, 91, 1),
+        
+        hintColor: Color.fromRGBO(230, 225, 100, 1),
         buttonTheme: ButtonThemeData(
           buttonColor: accent,
           highlightColor: primary,

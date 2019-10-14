@@ -151,7 +151,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                                 _telefoneInputController.text;
 
                             _bloc.saveController.add(_model);
-                          }, context, Icon(FontAwesomeIcons.save)),
+                          }, context, Icon(FontAwesomeIcons.save, color: Theme.of(context).primaryColor,), 20),
                         );
                     }
                   },

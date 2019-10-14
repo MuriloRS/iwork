@@ -18,34 +18,30 @@ class UserBloc extends BlocBase {
   FirebaseAuth _auth;
   FirebaseUser _user;
   Map userData;
-  UserProviderModel _model;
   bool isLoggedIn;
 
   final _stateController = BehaviorSubject<UserState>();
 
   Stream<UserState> get outState => _stateController.stream;
 
-  UserBloc(model) {
-    _model = model;
+  UserBloc() {
     _auth = FirebaseAuth.instance;
   }
 
-  Future<void> currentUser() async {
+  Future<Map<String, dynamic>> currentUser() async {
     FirebaseUser user = await _auth.currentUser();
 
     if (user != null) {
       userData = await _getUserData(user.uid);
 
-      _model.userData = userData;
-      _model.userFirebase = user;
-      this.isLoggedIn = true;
+      return userData;
     } else {
-      this.isLoggedIn = false;
+      return null;
     }
   }
 
-  String getUserSkills() {
-    return _model.userData['skills']
+  String getUserSkills(userData) {
+    return userData['skills']
         .toString()
         .trim()
         .replaceAll(',', ', ')

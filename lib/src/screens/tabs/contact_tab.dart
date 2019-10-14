@@ -110,7 +110,7 @@ class ContactTab extends StatelessWidget {
                               FontAwesomeIcons.paperPlane,
                               size: 18,
                               color: Theme.of(context).primaryColor,
-                            ));
+                            ), 20);
                     }
                   },
                 )

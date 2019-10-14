@@ -27,7 +27,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
         ? p.basename(widget._bloc.curriculum.path)
         : widget._model.userData['curriculum'];
 
-    _userBloc = UserBloc(widget._model);
+    _userBloc = UserBloc();
 
     return FutureBuilder(
       future: _userBloc.getCurriculumUser(basename),

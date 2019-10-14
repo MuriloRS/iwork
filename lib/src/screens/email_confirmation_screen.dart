@@ -18,7 +18,7 @@ class EmailConfirmationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     model = Provider.of<UserProviderModel>(context);
 
-    _userBloc = UserBloc(model);
+    _userBloc = UserBloc();
 
     return Material(
         child: SafeArea(

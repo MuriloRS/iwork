@@ -32,9 +32,8 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
 
   @override
   Widget build(BuildContext context) {
-
     model = Provider.of<UserProviderModel>(context);
-    
+
     _userBloc = SignupUserBloc(model);
 
     _listenOutState();
@@ -52,13 +51,13 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
         body: _signupScreenForms());
   }
 
-  void _listenOutState(){
+  void _listenOutState() {
     _userBloc.outState.listen((state) {
       switch (state) {
         case SignupState.SUCCESS:
           Navigator.of(context).pop();
-          Navigator.of(context)
-              .pushReplacement(NavigatorAnimation(widget: EmailConfirmationScreen(typeUser: 1)));
+          Navigator.of(context).pushReplacement(
+              NavigatorAnimation(widget: EmailConfirmationScreen(typeUser: 1)));
           break;
         default:
           return Container();
@@ -76,12 +75,14 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
           height: 5,
         ),
         FlatButton(
+          color: Theme.of(context).primaryColorLight,
           child: Text(
             "Cadastrar Empresa",
             style: TextStyle(
                 decoration: TextDecoration.underline,
-                fontSize: 16,
-                color: Theme.of(context).cardColor),
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+                color: Theme.of(context).hintColor),
           ),
           onPressed: () {
             Navigator.push(
@@ -347,13 +348,13 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   Widget _buildButtonSignup() {
     return Container(
       child: FlatButton(
-        color: Colors.black,
+        color: Theme.of(context).accentColor,
         padding: EdgeInsets.all(10),
         child: Text(
           'Cadastrar',
           style: TextStyle(
               fontSize: 22,
-              color: Theme.of(context).hintColor,
+              color: Theme.of(context).primaryColor,
               fontWeight: FontWeight.w600),
         ),
         onPressed: () {

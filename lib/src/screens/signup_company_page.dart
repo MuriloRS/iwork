@@ -118,13 +118,13 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
   Widget _buildButtonSignup() {
     return Container(
       child: FlatButton(
-        color: Colors.black,
+        color: Theme.of(context).accentColor,
         padding: EdgeInsets.all(10),
         child: Text(
           'Cadastrar',
           style: TextStyle(
               fontSize: 22,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).primaryColor,
               fontWeight: FontWeight.w600),
         ),
         onPressed: () {
@@ -248,22 +248,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         _buildFormBuilderProfessional(),
-        SizedBox(
-          height: 5,
-        ),
-        FlatButton(
-          child: Text(
-            "Cadastrar Empresa",
-            style: TextStyle(
-                decoration: TextDecoration.underline,
-                fontSize: 16,
-                color: Theme.of(context).hintColor),
-          ),
-          onPressed: () {
-            Navigator.of(context)
-                .push(NavigatorAnimation(widget: SignupCompanyPage()));
-          },
-        ),
+        
       ],
     ));
   }

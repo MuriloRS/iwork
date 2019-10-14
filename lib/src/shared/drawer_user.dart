@@ -17,7 +17,7 @@ class DrawerUser extends StatelessWidget {
     UserProviderModel _model;
     UserBloc _bloc;
     _model = Provider.of<UserProviderModel>(context);
-    _bloc = new UserBloc(_model);
+    _bloc = new UserBloc();
 
     return SafeArea(
         child: Drawer(
@@ -83,7 +83,7 @@ class DrawerUser extends StatelessWidget {
                     _bloc.signout();
 
                     Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => MyApp()));
+                        MaterialPageRoute(builder: (context) => LoginPage()));
                   },
                 ),
               )),

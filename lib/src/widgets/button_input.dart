@@ -7,7 +7,7 @@ class ButtonInput {
   ButtonInput._();
 
   static Widget getButton(TYPE_BUTTON type, COLOR_BUTTON color, String text,
-      Function() buttonFunction, BuildContext context, Icon icon) {
+      Function() buttonFunction, BuildContext context, Icon icon, double fontSize) {
     switch (type) {
       case TYPE_BUTTON.NORMAL:
         return FlatButton(
@@ -17,9 +17,9 @@ class ButtonInput {
             style: color == COLOR_BUTTON.DEFAULT
                 ? TextStyle(
                     color: Theme.of(context).accentColor,
-                    fontSize: 20,
+                    fontSize: fontSize,
                     fontWeight: FontWeight.w600)
-                : TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Theme.of(context).primaryColor),
+                : TextStyle(fontSize: fontSize, fontWeight: FontWeight.w600, color: Theme.of(context).primaryColor),
           ),
           color: _getColorButton(color, context),
           textColor: Colors.white,
@@ -68,9 +68,9 @@ class ButtonInput {
               style: color == COLOR_BUTTON.DEFAULT
                   ? TextStyle(
                       color: Colors.grey[800],
-                      fontSize: 20,
+                      fontSize: fontSize,
                       fontWeight: FontWeight.w600)
-                  : TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  : TextStyle(fontSize: fontSize, fontWeight: FontWeight.w600),
             ),
             onPressed: () {
               buttonFunction();
