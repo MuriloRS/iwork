@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class Alerts {
   static void buildCupertinoDialog(
       {@required String title,
-      @required List<Widget> actions,
+      List<Widget> actions,
       @required BuildContext context,
       @required Widget content}) {
     showDialog(
@@ -12,10 +12,13 @@ class Alerts {
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
-            title: Text(title),
+            title: Text(title,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
             content: content,
             actions: actions,
           );
         });
   }
+
+
 }

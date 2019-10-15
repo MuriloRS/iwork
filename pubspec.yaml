@@ -36,6 +36,8 @@ dependencies:
   auto_size_text: 2.1.0
   flutter_rating_bar: 3.0.0
   transparent_image: 1.0.0
+  rflutter_alert: 1.0.3
+  swipe_stack: 1.0.0
   flutter:
     sdk: flutter
 

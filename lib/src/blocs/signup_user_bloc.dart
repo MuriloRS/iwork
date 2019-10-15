@@ -61,6 +61,7 @@ class SignupUserBloc extends BlocBase {
       data.remove('password');
 
       data.putIfAbsent('profileCompleted', () => false);
+      data.putIfAbsent('rating', () => 0.0);
 
       FirebaseUser user = await _auth.currentUser();
       await Firestore.instance
