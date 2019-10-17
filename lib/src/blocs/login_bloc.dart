@@ -32,7 +32,7 @@ class LoginBloc extends BlocBase {
   }
 
   void _executeLogin(UserModel user) async {
-    _stateController.add(LoginState.LOADING);
+      _stateController.add(LoginState.LOADING);
 
     AuthResult _userAuth;
     try {

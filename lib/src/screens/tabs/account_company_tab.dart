@@ -144,7 +144,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                         return Container(
                           width: double.infinity,
                           child: ButtonInput.getButton(
-                              TYPE_BUTTON.IMAGE, COLOR_BUTTON.HINT, 'Salvar',
+                              TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar',
                               () {
                             _model.userData['name'] = _nomeInputController.text;
                             _model.userData['telephone'] =

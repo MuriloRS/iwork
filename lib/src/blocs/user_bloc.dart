@@ -1,6 +1,5 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/subjects.dart';
@@ -85,9 +84,9 @@ class UserBloc extends BlocBase {
   }
 
   Future<Map> _getUserData(uid) async {
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection("users").document(uid).get();
+    DocumentSnapshot snapshot;
 
+    snapshot = await Firestore.instance.collection("users").document(uid).get();
     return snapshot.data;
   }
 

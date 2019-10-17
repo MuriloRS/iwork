@@ -261,7 +261,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
       controller: _cnpjController,
       maxLength: 14,
       decoration: new InputDecoration(
-        helperStyle: TextStyle(color: Colors.black),
+        helperStyle: TextStyle(color: Colors.white),
         filled: true,
         fillColor: Color.fromRGBO(255, 255, 255, 1),
         hintText: 'Cnpj',

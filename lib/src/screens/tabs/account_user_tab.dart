@@ -228,7 +228,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                           _model.userData['skills'] = _skillsInputController
                               .text
                               .replaceAll(' ', '')
-                              .split(",");
+                              .split(",").toString().toLowerCase();
 
                           _bloc.saveController.add(_model);
                         },
@@ -251,7 +251,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
         case AccountUserState.SUCCESS:
           Scaffold.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 10),
+            duration: Duration(seconds: 5),
             elevation: 5,
             content: Container(
                 height: 50,
@@ -259,6 +259,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                 child: Text("Seu cadastro foi salvo!",
                     style: TextStyle(fontSize: 18))),
           ));
+
           break;
         case AccountUserState.FAIL:
           Scaffold.of(context).showSnackBar(SnackBar(

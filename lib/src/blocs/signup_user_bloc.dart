@@ -9,7 +9,6 @@ import 'package:rxdart/rxdart.dart';
 enum SignupState { IDLE, LOADING, SUCCESS, FAIL, ERROR_EMAIL }
 
 class SignupUserBloc extends BlocBase {
-
   UserProviderModel _model;
 
   //CONTROLLERS
@@ -27,7 +26,7 @@ class SignupUserBloc extends BlocBase {
   Function(String) get changeEmail => _emailController.sink.add;
 
   SignupUserBloc(model) {
-    _model= model;
+    _model = model;
     _singupController.stream.listen(_signupFirebase);
   }
 
@@ -38,16 +37,16 @@ class SignupUserBloc extends BlocBase {
       FirebaseAuth _auth = FirebaseAuth.instance;
 
       try {
-
         //Tenta criar o usuário novo com email e senha
-        await _auth.createUserWithEmailAndPassword(
+        AuthResult result = await _auth.createUserWithEmailAndPassword(
             email: data['email'], password: data['password']);
+
+        _model.userFirebase = result.user;
 
         //Envia um email de confirmação de conta
         await _model.userFirebase.sendEmailVerification();
 
         _model.notifyListeners();
-
       } catch (e) {
         if (e.code.toString() == "ERROR_EMAIL_ALREADY_IN_USE") {
           _emailController.addError("Esse email já está sendo usado.");
@@ -64,6 +63,7 @@ class SignupUserBloc extends BlocBase {
       data.putIfAbsent('rating', () => 0.0);
 
       FirebaseUser user = await _auth.currentUser();
+
       await Firestore.instance
           .collection("users")
           .document(user.uid)

@@ -1,15 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/blocs/company_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
-import 'package:contratacao_funcionarios/src/screens/company_screens.dart/user_detail_screen.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_company_tab.dart';
-import 'package:contratacao_funcionarios/src/shared/alerts.dart';
-import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:swipe_stack/swipe_stack.dart';
@@ -17,19 +12,23 @@ import 'package:swipe_stack/swipe_stack.dart';
 class HomeCompanyTab extends StatelessWidget {
   UserProviderModel _model;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final GlobalKey<FormBuilderState> _fbkey = new GlobalKey<FormBuilderState>();
-  final CompanyBloc bloc = CompanyBloc();
-
+  static final GlobalKey<SwipeStackState> swipeKey =
+      new GlobalKey<SwipeStackState>();
+  CompanyBloc bloc;
   final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
+  static double avaliacaoMedia = 3.0;
+  static String funcaoSelecionada = '';
 
   @override
   Widget build(BuildContext context) {
     _model = Provider.of<UserProviderModel>(context);
+    bloc = CompanyBloc(_model.userFirebase.uid);
 
     if (!_model.userData['profileCompleted']) {
       return AccountCompanyTab();
     }
-
+    bloc.searchProfessionalController
+        .add({'context': context, 'funcao': null, 'rating': null});
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -75,32 +74,37 @@ class HomeCompanyTab extends StatelessWidget {
         body: SingleChildScrollView(
             child: Container(
           padding: EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 5),
-          height: MediaQuery.of(context).size.height - 80,
-          child: Center(
-            child: FutureBuilder(
-              future: bloc.searchProfessionals(context),
-              builder: (context, AsyncSnapshot<List<SwiperItem>> snapshot) {
-                if (snapshot.connectionState.index ==
-                        ConnectionState.none.index ||
-                    snapshot.connectionState.index ==
-                        ConnectionState.waiting.index) {
-                  return Loader();
-                } else {
-                  SwipeStack(
-                    children: snapshot.data,
-                    visibleCount: 3,
-                    stackFrom: StackFrom.Top,
-                    translationInterval: 6,
-                    scaleInterval: 0.03,
-                    onEnd: () => debugPrint("onEnd"),
-                    onSwipe: (int index, SwiperPosition position) =>
-                        debugPrint("onSwipe $index $position"),
-                    onRewind: (int index, SwiperPosition position) =>
-                        debugPrint("onRewind $index $position"),
-                  );
+          height: MediaQuery.of(context).size.height - 150,
+          child: StreamBuilder(
+            stream: bloc.outState,
+            builder: (context, AsyncSnapshot<dynamic> snapshot) {
+              if (snapshot.data == StateActual.LOADING ||
+                  !snapshot.hasData ||
+                  snapshot.connectionState.index ==
+                      ConnectionState.none.index ||
+                  snapshot.connectionState.index ==
+                      ConnectionState.waiting.index) {
+                return Loader();
+              } else {
+                if (bloc.listProfessionals.length == 0) {
+                  return Text('Nenhum Profissional Encontrado.');
                 }
-              },
-            ),
+                return SwipeStack(
+                  key: swipeKey,
+                  children: bloc.listProfessionals,
+                  visibleCount: 3,
+                  stackFrom: StackFrom.Top,
+                  translationInterval: 6,
+                  scaleInterval: 0.03,
+                  historyCount: 3,
+                  onEnd: () => debugPrint("onEnd"),
+                  onSwipe: (int index, SwiperPosition position) =>
+                      debugPrint("onSwipe $index $position"),
+                  onRewind: (int index, SwiperPosition position) =>
+                      debugPrint("onRewind $index $position"),
+                );
+              }
+            },
           ),
         )),
       ),
@@ -108,17 +112,29 @@ class HomeCompanyTab extends StatelessWidget {
   }
 
   void _showFilterDialog(context) {
-    TextEditingController funcaoController = TextEditingController();
+    TextEditingController funcaoController =
+        TextEditingController(text: HomeCompanyTab.funcaoSelecionada);
 
     Alert(
         context: context,
         title: 'Filtro',
-        style: AlertStyle(titleStyle: TextStyle(fontSize: 26)),
+        style: AlertStyle(
+            titleStyle: TextStyle(fontSize: 26), isOverlayTapDismiss: true),
+        closeFunction: () {},
         buttons: [
           DialogButton(
             child: Text("Buscar",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
-            onPressed: () {},
+            onPressed: () {
+              bloc.doSearchProfessional.add({
+                'context': context,
+                'funcao':
+                    funcaoController.text == '' ? null : funcaoController.text,
+                'rating': avaliacaoMedia
+              });
+
+              Navigator.pop(context);
+            },
             color: Theme.of(context).accentColor,
           )
         ],
@@ -154,7 +170,10 @@ class HomeCompanyTab extends StatelessWidget {
                     min: 0.0,
                     max: 5.0,
                     divisions: 10,
-                    initialValue: 3.0,
+                    initialValue: HomeCompanyTab.avaliacaoMedia,
+                    onChanged: (newValue) {
+                      avaliacaoMedia = newValue;
+                    },
                     attribute: 'Avaliação média',
                     decoration: InputDecoration(
                         hintText: 'Avaliação média',

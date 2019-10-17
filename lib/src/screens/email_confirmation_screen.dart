@@ -91,6 +91,9 @@ class EmailConfirmationScreen extends StatelessWidget {
             color: Colors.grey[200],
             onPressed: () async {
               await model.userFirebase.reload();
+              model.userData = await _userBloc.currentUser();
+              model.notifyListeners();
+              
               _userBloc.verifyEmailConfirmed();
             },
           )

@@ -71,19 +71,24 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future: futureCurrentUser,
-      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+      future:  Future.wait([
+futureCurrentUser,
+FirebaseAuth.instance.currentUser()
+      ]),
+      builder: (context, AsyncSnapshot<List<Object>> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
           return Loader();
         }
-        _model.userData = snapshot.data;
+        _model.userData = snapshot.data.elementAt(0);
+        _model.userFirebase = snapshot.data.elementAt(1);
         if (snapshot.data == null) {
           _userBloc.isLoggedIn = false;
         } else {
           _userBloc.isLoggedIn = true;
         }
         if (_model.userData != null && _userBloc.isLoggedIn) {
+
           if (_model.userData['isCompany'] == true) {
             return HomeScreenCompany();
           } else {
@@ -101,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: 20,
                         ),
-                        Image.asset('images/logo.png'),
+                        Image.asset('images/logo2.png'),
                         SizedBox(
                           height: 10,
                         ),
@@ -287,6 +292,7 @@ class _LoginPageState extends State<LoginPage> {
         case LoginState.SUCCESS:
           _model.userData = await _userBloc.currentUser();
           _model.userFirebase = await FirebaseAuth.instance.currentUser();
+          _model.notifyListeners();
 
           if (_model.userData['isCompany']) {
             Navigator.of(context)
