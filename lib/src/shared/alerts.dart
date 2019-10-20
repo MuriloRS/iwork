@@ -67,8 +67,9 @@ class Alerts {
             child: Text("Aceito"),
             isDefaultAction: true,
             onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
               contractDialog(context, doc);
-
             },
           )
         ]);
