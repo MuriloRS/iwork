@@ -1,10 +1,12 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/screens/company_screens.dart/user_detail_screen.dart';
-import 'package:contratacao_funcionarios/src/screens/login_page.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/home_company_tab.dart';
+import 'package:contratacao_funcionarios/src/shared/alerts.dart';
+import 'package:contratacao_funcionarios/src/shared/checkbox_contract_terms.dart';
 import 'package:contratacao_funcionarios/src/shared/currency_input_formatter.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
+import 'package:contratacao_funcionarios/src/widgets/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -12,10 +14,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:swipe_stack/swipe_stack.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
-enum StateActual { IDLE, LOADING, SUCCESS, FAIL }
+enum StateActual { IDLE, LOADING, SUCCESS, FAIL, EMPTY }
 
 class CompanyBloc extends BlocBase {
   final stateController = BehaviorSubject<StateActual>();
@@ -167,14 +167,17 @@ class CompanyBloc extends BlocBase {
                                   child: Text('Aceitar',
                                       style: TextStyle(fontSize: 18)),
                                   onPressed: () {
-                                    _buildAlertSendContract(context, document);
+                                    Alerts al = new Alerts();
+
+                                    al.buildDialogTerms(context, document,
+                                        buildAlertSendContract);
                                   })
                             ]),
                       ]))));
     });
   }
 
-  _buildAlertSendContract(context, DocumentSnapshot doc) {
+  buildAlertSendContract(context, DocumentSnapshot doc) {
     final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
     TextEditingController valorTotalController = TextEditingController();
     TextEditingController duracaoController = TextEditingController();
@@ -195,14 +198,24 @@ class CompanyBloc extends BlocBase {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
             color: Theme.of(context).accentColor,
             onPressed: () {
-              if (fbKey.currentState.validate()) {
-                _saveNewContract(
-                    dataInicio: dataInicioController.text,
-                    docProfessional: doc.documentID,
-                    docCompany: docCompany,
-                    duracao: duracaoController.text,
-                    valorTotal: valorTotalController.text,
-                    context: context);
+              if (DateTimePicker.selectedDate != null &&
+                  DateTimePicker.selectedTime != null) {
+                if (fbKey.currentState.validate()) {
+                  Navigator.of(context).pop();
+                  _saveNewContract(
+                      dataInicio: DateTimePicker.selectedDate,
+                      horaInicio: DateTimePicker.selectedTime,
+                      docProfessional: doc.documentID,
+                      docCompany: docCompany,
+                      duracao: duracaoController.text,
+                      valorTotal: valorTotalController.text,
+                      name: doc.data['name'],
+                      context: context);
+                }
+              } else {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Você precisa preencher Data e Hora"),
+                ));
               }
             },
           )
@@ -249,48 +262,45 @@ class CompanyBloc extends BlocBase {
               ),
               Text("Data de Início",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-              FlatButton(
-                onPressed: () {
-                  
-                },
-                child: Text("''12"),
+              DateTimePicker(false),
+              SizedBox(
+                height: 20,
               ),
+              Text("Hora de Início",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+              DateTimePicker(true),
               SizedBox(
                 height: 20,
               ),
             ]))).show();
   }
 
-  Future<Null> _selectedDate(BuildContext context) async {
-    DateTime _date = new DateTime.now();
-    TimeOfDay _time = new TimeOfDay.now();
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: _date,
-        firstDate: new DateTime(2016),
-        lastDate: new DateTime(2019));
-
-    if (picked != null && picked != _date) {
-      print("Date selected ${_date.toString()}");
-      /*setState(() {
-        _date = picked;
-      });*/
-    }
-  }
-
   void _saveNewContract(
       {@required String docProfessional,
       @required String docCompany,
       @required String valorTotal,
-      @required String dataInicio,
+      @required DateTime dataInicio,
+      @required DateTime horaInicio,
       @required String duracao,
+      @required String name,
       @required BuildContext context}) async {
+    double valor = double.parse(valorTotal
+        .replaceAll('R\$', '')
+        .replaceAll(' ', '')
+        .replaceAll(',', '.')
+        .toString());
+
+    DateTime newDate = DateTime(dataInicio.year, dataInicio.month,
+        dataInicio.day, horaInicio.hour, horaInicio.minute);
+
     await Firestore.instance.collection('contracts').add({
-      'totalValue': double.parse(valorTotal),
-      'dataInicio': dataInicio,
+      'totalValue': valor,
+      'dataInicio': newDate,
       'duracao': duracao,
       'professional': docProfessional,
       'company': docCompany,
+      'nameProfessional': name,
+      'rating': '0',
       'status': 'PENDENTE'
     });
 
@@ -298,10 +308,27 @@ class CompanyBloc extends BlocBase {
 
     Scaffold.of(context).showSnackBar(SnackBar(
       backgroundColor: Colors.green,
-      duration: Duration(seconds: 8),
+      duration: Duration(seconds: 15),
       content: Text(
-          "O contrato foi enviado para o Profissional, agora é só aguardar ele aceitar, se prefereir pode ligar para ele para agilizar o processo."),
+          "O contrato foi enviado para o Profissional, agora é só aguardar ele aceitar, se prefereir pode ligar para ele para agilizar o processo.",
+          textAlign: TextAlign.center),
     ));
+
+    HomeCompanyTab.swipeKey.currentState.swipeRight();
+  }
+
+  void updateRatingContract(contractId, newRating) async {
+    await Firestore.instance
+        .collection('contracts')
+        .document(contractId)
+        .updateData({'rating': newRating.toString()});
+  }
+
+  Future<QuerySnapshot> searchCompanyContracts(idCompany) async {
+    return await Firestore.instance
+        .collection('contracts')
+        .where('company', isEqualTo: idCompany)
+        .getDocuments();
   }
 
   @override

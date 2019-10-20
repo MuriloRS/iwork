@@ -1,4 +1,3 @@
-import 'package:contratacao_funcionarios/main.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/login_page.dart';
@@ -25,17 +24,17 @@ class DrawerUser extends StatelessWidget {
       children: <Widget>[
         Container(
             color: Theme.of(context).accentColor,
-            height: 120.0,
+            height: 130.0,
             width: double.infinity,
             padding: EdgeInsets.only(right: 25, left: 25, top: 25, bottom: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "Busca Emprego",
+                  "iWork",
                   style: TextStyle(
                       color: Theme.of(context).primaryColor,
-                      fontSize: 28.0,
+                      fontSize: 34.0,
                       fontWeight: FontWeight.w800),
                 ),
                 SizedBox(
@@ -43,9 +42,9 @@ class DrawerUser extends StatelessWidget {
                 ),
                 Text(_model.userData['name'],
                     style: TextStyle(
-                        color: Colors.grey[900],
+                        color: Colors.white,
                         fontWeight: FontWeight.w400,
-                        fontSize: 18))
+                        fontSize: 22))
               ],
             )),
         Container(
@@ -57,13 +56,15 @@ class DrawerUser extends StatelessWidget {
                 height: 20,
               ),
               DrawerTile(FontAwesomeIcons.home, "Início", pageController, 0),
-              DrawerTile(FontAwesomeIcons.question, "Como Funciona",
+              DrawerTile(FontAwesomeIcons.fileContract, "Contratos",
                   pageController, 1),
-              DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 2),
+              DrawerTile(FontAwesomeIcons.question, "Como Funciona",
+                  pageController, 2),
+              DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 3),
               DrawerTile(
-                  FontAwesomeIcons.envelope, "Contato", pageController, 3),
+                  FontAwesomeIcons.envelope, "Contato", pageController, 4),
               DrawerTile(FontAwesomeIcons.fileSignature, "Termos e Condições",
-                  pageController, 4),
+                  pageController, 5),
             ],
           ),
         ),

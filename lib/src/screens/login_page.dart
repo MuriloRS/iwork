@@ -59,7 +59,10 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () {
           if (LoginPage.fbKey.currentState.validate()) {
             UserModel user = new UserModel(
-                email: LoginPage.fbKey.currentState.fields['Emaile'].currentState.value, senha: LoginPage.fbKey.currentState.fields['Senhae'].currentState.value);
+                email: LoginPage
+                    .fbKey.currentState.fields['Emaile'].currentState.value,
+                senha: LoginPage
+                    .fbKey.currentState.fields['Senhae'].currentState.value);
 
             _listenState();
 
@@ -71,10 +74,8 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future:  Future.wait([
-futureCurrentUser,
-FirebaseAuth.instance.currentUser()
-      ]),
+      future:
+          Future.wait([futureCurrentUser, FirebaseAuth.instance.currentUser()]),
       builder: (context, AsyncSnapshot<List<Object>> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
@@ -88,7 +89,6 @@ FirebaseAuth.instance.currentUser()
           _userBloc.isLoggedIn = true;
         }
         if (_model.userData != null && _userBloc.isLoggedIn) {
-
           if (_model.userData['isCompany'] == true) {
             return HomeScreenCompany();
           } else {
@@ -104,11 +104,12 @@ FirebaseAuth.instance.currentUser()
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         SizedBox(
-                          height: 20,
+                          height: 30,
                         ),
-                        Image.asset('images/logo2.png'),
+                       
+                        Container(child:Image.asset('images/logo3.png'), height: 110,),
                         SizedBox(
-                          height: 10,
+                          height: 30,
                         ),
                         InputField(
                             _emailController,
@@ -161,7 +162,7 @@ FirebaseAuth.instance.currentUser()
                                 case LoginState.IDLE:
                                   return Container();
                                   break;
-                                
+
                                 case LoginState.LOADING:
                                   return Loader();
                                 default:
@@ -295,8 +296,8 @@ FirebaseAuth.instance.currentUser()
           _model.notifyListeners();
 
           if (_model.userData['isCompany']) {
-            Navigator.of(context)
-                .pushReplacement(NavigatorAnimation(widget: HomeScreenCompany()));
+            Navigator.of(context).pushReplacement(
+                NavigatorAnimation(widget: HomeScreenCompany()));
           } else {
             Navigator.of(context)
                 .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));

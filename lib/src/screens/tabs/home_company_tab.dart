@@ -85,6 +85,16 @@ class HomeCompanyTab extends StatelessWidget {
                   snapshot.connectionState.index ==
                       ConnectionState.waiting.index) {
                 return Loader();
+              } else if (snapshot.data == StateActual.EMPTY) {
+                return Center(
+                    child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.all(15),
+                  child: Text(
+                      "Nenhum profissional encontrado! Tente mudar o filtro clicando botão abaixo.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 22)),
+                ));
               } else {
                 if (bloc.listProfessionals.length == 0) {
                   return Text('Nenhum Profissional Encontrado.');
@@ -97,7 +107,7 @@ class HomeCompanyTab extends StatelessWidget {
                   translationInterval: 6,
                   scaleInterval: 0.03,
                   historyCount: 3,
-                  onEnd: () => debugPrint("onEnd"),
+                  onEnd: () => bloc.stateController.add(StateActual.EMPTY),
                   onSwipe: (int index, SwiperPosition position) =>
                       debugPrint("onSwipe $index $position"),
                   onRewind: (int index, SwiperPosition position) =>
@@ -164,6 +174,7 @@ class HomeCompanyTab extends StatelessWidget {
                   height: 30,
                 ),
                 Text("Avaliação média",
+                    textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
                 FormBuilderSlider(
@@ -178,7 +189,7 @@ class HomeCompanyTab extends StatelessWidget {
                     decoration: InputDecoration(
                         hintText: 'Avaliação média',
                         isDense: true,
-                        fillColor: Colors.grey[150],
+                        fillColor: Colors.white,
                         border: InputBorder.none))
               ],
             ))).show();

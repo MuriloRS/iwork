@@ -3,6 +3,7 @@ import 'package:contratacao_funcionarios/src/screens/login_page.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/home_company_tab.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate
+          GlobalWidgetsLocalizations.delegate,
+          const FallbackCupertinoLocalisationsDelegate(),
         ],
         supportedLocales: [const Locale('pt', 'BR')],
         title: 'Contratação de Funcionários',
@@ -48,6 +50,7 @@ class MyApp extends StatelessWidget {
     return ThemeData(
         primaryColor: primary,
         accentColor: accent,
+        accentColorBrightness: Brightness.dark,
         backgroundColor: Colors.white,
         buttonColor: Color.fromRGBO(20, 33, 61, 1),
         errorColor: Color.fromRGBO(209, 0, 0, 1),
@@ -89,6 +92,7 @@ class MyApp extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         ),
         primaryTextTheme: TextTheme(
+            body2: TextStyle(fontSize: 14),
             subtitle: TextStyle(
                 fontSize: 24, fontWeight: FontWeight.w600, color: accent),
             title: TextStyle(
@@ -100,4 +104,19 @@ class MyApp extends StatelessWidget {
               fontSize: 28, color: primary, fontWeight: FontWeight.w700),
         ));
   }
+}
+
+class FallbackCupertinoLocalisationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const FallbackCupertinoLocalisationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      DefaultCupertinoLocalizations.load(locale);
+
+  @override
+  bool shouldReload(FallbackCupertinoLocalisationsDelegate old) => false;
 }
