@@ -6,14 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class RecoverScreen extends StatefulWidget {
-  
-
   @override
   _RecoverScreenState createState() => _RecoverScreenState();
 }
 
 class _RecoverScreenState extends State<RecoverScreen> {
-
   TextEditingController _emailController;
   RecoverPasswordBloc loginBloc = new RecoverPasswordBloc();
 
@@ -45,13 +42,14 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    _emailController  = TextEditingController();
+    _emailController = TextEditingController();
 
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: TitleScaffold(title: "Recuperar Senha",),
+          title: TitleScaffold(
+            title: "Recuperar Senha",
+          ),
         ),
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
@@ -59,7 +57,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
             children: <Widget>[
               Text(
                 "Digite seu email para recuperar sua senha",
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(fontSize: 16.0, color: Colors.white),
                 textAlign: TextAlign.left,
               ),
               SizedBox(
@@ -77,11 +75,13 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   ],
                   loginBloc.outEmail,
                   loginBloc.changeEmail,
-                  "recoverEmail", false),
+                  "recoverEmail",
+                  false),
               SizedBox(height: 15.0),
               StreamBuilder(
                 stream: loginBloc.outState,
-                builder: (context, AsyncSnapshot<RecoverPasswordState> snapshot) {
+                builder:
+                    (context, AsyncSnapshot<RecoverPasswordState> snapshot) {
                   switch (snapshot.data) {
                     case RecoverPasswordState.IDLE:
                       return _buildButtonSend(email: _emailController.text);
@@ -101,9 +101,12 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   Widget _buildButtonSend({String email}) {
     return FlatButton(
-      child: Text("Recuperar senha", style: TextStyle(color: Colors.white, fontSize: 18),),
-      color: Theme.of(context).hintColor,
-      textColor: Colors.white,
+      child: Text(
+        "Recuperar senha",
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+      color: Theme.of(context).accentColor,
+      textColor: Theme.of(context).primaryColor,
       onPressed: () {
         loginBloc.doRecoverPassword.add(email);
       },

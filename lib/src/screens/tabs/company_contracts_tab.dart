@@ -28,7 +28,7 @@ class CompanyContractsTab extends StatelessWidget {
                         ConnectionState.none.index ||
                     snapshot.connectionState.index ==
                         ConnectionState.waiting.index) {
-                  return Loader();
+                  return Center(child:Loader());
                 } else {
                   List<Widget> listContracts = new List();
 
@@ -124,7 +124,7 @@ class CompanyContractsTab extends StatelessWidget {
                   });
 
                   return Container(
-                    height: MediaQuery.of(context).size.height - 300,
+                    height: MediaQuery.of(context).size.height - 120,
                     child: ListView.separated(
                       separatorBuilder: (context, index) {
                         return SizedBox(

@@ -1,12 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contratacao_funcionarios/src/blocs/company_bloc.dart';
+import 'package:contratacao_funcionarios/src/shared/alerts.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class UserDetailScreen extends StatelessWidget {
-  final TextStyle styleDefault = TextStyle(fontSize: 14);
+  final TextStyle styleDefault = TextStyle(fontSize: 16);
+  CompanyBloc bloc;
+  DocumentSnapshot docCompany;
+
+  UserDetailScreen(this.docCompany);
 
   @override
   Widget build(BuildContext context) {
+    bloc = CompanyBloc(docCompany.documentID);
     return SafeArea(
         child: Scaffold(
             backgroundColor: Theme.of(context).primaryColor,
@@ -30,9 +38,9 @@ class UserDetailScreen extends StatelessWidget {
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
-                                    Text("Avaliação: ", style: styleDefault),
+                                    Text("Avaliação média: ", style: styleDefault),
                                     RatingBar(
-                                      initialRating: 4.5,
+                                      initialRating: docCompany.data['rating'],
                                       direction: Axis.horizontal,
                                       allowHalfRating: true,
                                       itemSize: 18,
@@ -53,43 +61,38 @@ class UserDetailScreen extends StatelessWidget {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                Text("Nome: Murilo ", style: styleDefault),
+                                Text("Nome: ${docCompany.data['name']}", style: styleDefault),
                                 SizedBox(
                                   height: 20,
                                 ),
-                                Text("Idade: 22", style: styleDefault),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Text("Cidade: Santa Cruz do Sul",
+                                
+                                Text("Cidade: ${docCompany.data['city']}",
                                     style: styleDefault),
                                 SizedBox(
                                   height: 20,
                                 ),
-                                Text("Funções: Garçom, pedreiro",
+                                Text("Funções: ${docCompany.data['skills']}",
                                     style: styleDefault),
                                 SizedBox(
-                                  height: 10,
+                                  height: 25,
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
-                                    RaisedButton(
-                                      color: Colors.red,
-                                      child: Text('Rejeitar',
-                                          style: TextStyle(fontSize: 15)),
-                                      onPressed: () {},
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    RaisedButton(
-                                      color: Colors.green,
-                                      child: Text('Aceitar',
-                                          style: TextStyle(fontSize: 15)),
-                                      onPressed: () {},
+                                    FlatButton(
+                                      color: Theme.of(context).hintColor,
+                                      child: Text('Propor Contrato',
+                                          style: TextStyle(fontSize: 15, color: Theme.of(context).primaryColor)),
+                                      onPressed: () {
+                                        Alerts al = new Alerts();
+
+                                        al.buildDialogTerms(
+                                            context,
+                                            this.docCompany,
+                                            bloc.buildAlertSendContract);
+                                      },
                                     )
                                   ],
                                 )

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/screens/company_screens.dart/user_detail_screen.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/home_company_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/alerts.dart';
-import 'package:contratacao_funcionarios/src/shared/checkbox_contract_terms.dart';
 import 'package:contratacao_funcionarios/src/shared/currency_input_formatter.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/date_time_picker.dart';
@@ -142,7 +141,8 @@ class CompanyBloc extends BlocBase {
                             child: ButtonInput.getButton(TYPE_BUTTON.OUTLINE,
                                 COLOR_BUTTON.DEFAULT, 'Ver mais', () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => UserDetailScreen()));
+                                  builder: (context) =>
+                                      UserDetailScreen(document)));
                             }, context, null, 15)),
                         SizedBox(
                           height: 25,
@@ -152,26 +152,19 @@ class CompanyBloc extends BlocBase {
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              RaisedButton(
-                                color: Colors.red,
-                                child: Text('Rejeitar',
-                                    style: TextStyle(fontSize: 18)),
-                                onPressed: HomeCompanyTab
-                                    .swipeKey.currentState.swipeLeft,
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              RaisedButton(
-                                  color: Colors.green,
-                                  child: Text('Aceitar',
-                                      style: TextStyle(fontSize: 18)),
-                                  onPressed: () {
-                                    Alerts al = new Alerts();
+                              FlatButton(
+                                color: Theme.of(context).hintColor,
+                                child: Text('Propor Contrato',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Theme.of(context).primaryColor)),
+                                onPressed: () {
+                                  Alerts al = new Alerts();
 
-                                    al.buildDialogTerms(context, document,
-                                        buildAlertSendContract);
-                                  })
+                                  al.buildDialogTerms(context, document,
+                                      buildAlertSendContract);
+                                },
+                              ) 
                             ]),
                       ]))));
     });
@@ -181,9 +174,9 @@ class CompanyBloc extends BlocBase {
     final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
     TextEditingController valorTotalController = TextEditingController();
     TextEditingController duracaoController = TextEditingController();
-    TextEditingController dataInicioController =
-        TextEditingController(text: DateTime.now().toString());
+
     final CurrencyInputFormatter _formatNumber = new CurrencyInputFormatter();
+    Navigator.of(context).pop();
 
     Alert(
         context: context,
@@ -303,8 +296,6 @@ class CompanyBloc extends BlocBase {
       'rating': '0',
       'status': 'PENDENTE'
     });
-
-    Navigator.pop(context);
 
     Scaffold.of(context).showSnackBar(SnackBar(
       backgroundColor: Colors.green,

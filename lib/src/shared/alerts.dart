@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Alerts {
   static void buildCupertinoDialog(
@@ -23,7 +24,7 @@ class Alerts {
 
   void buildDialogTerms(BuildContext context, DocumentSnapshot doc,
       Function(BuildContext, DocumentSnapshot) contractDialog) {
-    buildCupertinoDialog(
+    Alert(
         context: context,
         title: 'Termos de Serviço',
         content: Column(
@@ -35,6 +36,7 @@ class Alerts {
             Text(
               "Esses são os termos de serviço da nossa plataforma, você precisa concordar com eles para enviar um contrato para um profissional",
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)
             ),
             SizedBox(
               height: 16,
@@ -42,6 +44,7 @@ class Alerts {
             Text(
               " - O contrato e forma de pagamento devem ser acordados entre a empresa e o profissional.",
               textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[800])
             ),
             SizedBox(
               height: 10,
@@ -49,6 +52,7 @@ class Alerts {
             Text(
               " - Nós não nos responsabilizamos por quebra de contrato, não pagamento.",
               textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[800])
             ),
             SizedBox(
               height: 10,
@@ -56,22 +60,21 @@ class Alerts {
             Text(
               " - Caso ocorra algum problema nossa equipe deve ser informada para tomar as medidas cabíveis.",
               textAlign: TextAlign.left,
+             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[800])
             ),
             SizedBox(
               height: 10,
             )
           ],
         ),
-        actions: [
-          CupertinoDialogAction(
-            child: Text("Aceito"),
-            isDefaultAction: true,
+        buttons: [
+          DialogButton(
+            child: Text("Aceito", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+
               contractDialog(context, doc);
             },
           )
-        ]);
+        ]).show();
   }
 }

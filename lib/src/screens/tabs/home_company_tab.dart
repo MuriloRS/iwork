@@ -74,7 +74,7 @@ class HomeCompanyTab extends StatelessWidget {
         body: SingleChildScrollView(
             child: Container(
           padding: EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 5),
-          height: MediaQuery.of(context).size.height - 150,
+          height: MediaQuery.of(context).size.height -170,
           child: StreamBuilder(
             stream: bloc.outState,
             builder: (context, AsyncSnapshot<dynamic> snapshot) {
