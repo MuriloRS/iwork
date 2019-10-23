@@ -1,9 +1,7 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contratacao_funcionarios/src/widgets/historic_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
 
 enum UserState {
@@ -32,8 +30,11 @@ class UserBloc extends BlocBase {
   Future<Map<String, dynamic>> currentUser() async {
     FirebaseUser user = await _auth.currentUser();
 
+    userData = Map<String,dynamic>();
+
     if (user != null) {
-      userData = await _getUserData(user.uid);
+      userData['userData'] = await _getUserData(user.uid);
+      userData['userFirebase'] = user;
 
       return userData;
     } else {

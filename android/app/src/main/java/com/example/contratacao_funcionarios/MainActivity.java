@@ -1,4 +1,4 @@
-package com.example.contratacao_funcionarios;
+package com.murilo.iwork;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

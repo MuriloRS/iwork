@@ -98,14 +98,9 @@ class AccountUserBloc extends BlocBase {
 
       if (this.curriculum != null) {
         user.userData['curriculum'] = p.basename(this.curriculum.path);
-        final StorageReference storageRef = FirebaseStorage.instance
-            .ref()
-            .child(
-                user.userFirebase.uid + "/" + p.basename(this.curriculum.path));
 
-        final StorageUploadTask uploadTask = storageRef.putFile(
-          File(this.curriculum.path),
-        );
+
+ 
       } else {
         if (user.userData['curriculum'] != '' && !user.userData['isCompany']) {
           FirebaseStorage.instance

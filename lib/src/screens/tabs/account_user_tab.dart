@@ -44,7 +44,6 @@ class _AccountUserTabState extends State<AccountUserTab> {
     _bloc = AccountUserBloc();
     _userBloc = UserBloc();
 
-    String _selectedLocation;
 
     _emailInputController.text = _model.userFirebase.email;
     _nomeInputController.text = _model.userData['name'];

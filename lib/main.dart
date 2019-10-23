@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
+final LoginPage myHomePage = LoginPage();
 
 class MyApp extends StatelessWidget {
   @override
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
         routes: {
           '/accountTab': (context) => Material(child: AccountUserTab()),
           '/contactTab': (context) => Scaffold(body: ContactTab()),
-          '/homeCompanyTab': (context) => Scaffold(body: HomeCompanyTab())
+          '/homeCompanyTab': (context) => Scaffold(body: HomeCompanyTab()),
+          '/loginPage': (context) => myHomePage,
         },
         debugShowCheckedModeBanner: false,
       ),

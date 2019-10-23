@@ -156,38 +156,6 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
     }
   }
 
-  FormBuilderTextField _buildTextBuildCnpj() {
-    return FormBuilderTextField(
-      autofocus: false,
-      attribute: "Cnpj",
-      keyboardType: TextInputType.number,
-      controller: _cnpjController,
-      maxLength: 14,
-      decoration: new InputDecoration(
-        helperStyle: TextStyle(color: Colors.black),
-        filled: true,
-        fillColor: Color.fromRGBO(255, 255, 255, 1),
-        hintText: 'Cnpj',
-        hintStyle: TextStyle(color: Colors.grey[600]),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-        focusedBorder: OutlineInputBorder(
-          borderSide:
-              new BorderSide(color: const Color.fromRGBO(210, 210, 210, 1)),
-          borderRadius: BorderRadius.all(Radius.circular(3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-            borderSide:
-                new BorderSide(color: const Color.fromRGBO(210, 210, 210, 1)),
-            borderRadius: BorderRadius.all(Radius.circular(3))),
-      ),
-      validators: [
-        FormBuilderValidators.required(errorText: 'O CNPJ é obrigatório'),
-        FormBuilderValidators.max(14),
-        FormBuilderValidators.min(14),
-      ],
-    );
-  }
 
   FormBuilderTextField _buildTextBuildName() {
     return FormBuilderTextField(

@@ -4,7 +4,6 @@ import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/email_confirmation_screen.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
-import 'package:contratacao_funcionarios/src/widgets/navigator_animation.dart';
 import 'package:contratacao_funcionarios/src/widgets/title_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';

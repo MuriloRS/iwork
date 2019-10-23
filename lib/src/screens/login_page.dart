@@ -17,35 +17,57 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
-  static final GlobalKey<FormBuilderState> fbKey =
-      GlobalKey<FormBuilderState>();
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  LoginBloc _loginBloc = LoginBloc();
+  LoginBloc _loginBloc;
   UserBloc _userBloc = UserBloc();
   UserProviderModel _model;
-  TextEditingController _emailController;
-  TextEditingController _senhaController;
   Future<Map<String, dynamic>> futureCurrentUser;
+
+  Widget _formLogin;
 
   @override
   void initState() {
     super.initState();
-
     futureCurrentUser = _userBloc.currentUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    _emailController = new TextEditingController();
-    _senhaController = new TextEditingController();
     _model = Provider.of<UserProviderModel>(context);
+    _loginBloc = LoginBloc(context);
 
-    Widget _getButtonLogin() {
+    void _listenState() {
+      _loginBloc.outTypeUser.listen((state) async {
+        switch (state) {
+          case TypeUser.COMPANY:
+            Navigator.of(context).pushReplacement(
+                NavigatorAnimation(widget: HomeScreenCompany()));
+
+            break;
+
+          case TypeUser.USER:
+            Navigator.of(context)
+                .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));
+            break;
+          case TypeUser.NOT_CONFIRMED:
+            Navigator.of(context).pushReplacement(NavigatorAnimation(
+                widget: EmailConfirmationScreen(
+              typeUser: _userBloc.userData['isCompany'],
+            )));
+            break;
+          default:
+            return Container();
+        }
+
+        return Container();
+      });
+    }
+
+    Widget _getButtonLogin(fbKey) {
       return FlatButton(
         child: Text(
           "ENTRAR",
@@ -57,12 +79,10 @@ class _LoginPageState extends State<LoginPage> {
         padding: EdgeInsets.all(10),
         color: Theme.of(context).accentColor,
         onPressed: () {
-          if (LoginPage.fbKey.currentState.validate()) {
+          if (fbKey.currentState.validate()) {
             UserModel user = new UserModel(
-                email: LoginPage
-                    .fbKey.currentState.fields['Emaile'].currentState.value,
-                senha: LoginPage
-                    .fbKey.currentState.fields['Senhae'].currentState.value);
+                email: fbKey.currentState.fields['Emaile'].currentState.value,
+                senha: fbKey.currentState.fields['Senhae'].currentState.value);
 
             _listenState();
 
@@ -70,6 +90,204 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
       );
+    }
+
+    FormBuilder _buildForm() {
+      final fbKey = GlobalKey<FormBuilderState>();
+
+      return FormBuilder(
+        key: fbKey,
+        child: SingleChildScrollView(
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      child: Image.asset('images/logo3.png'),
+                      height: 110,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    InputField(
+                        null,
+                        false,
+                        TextInputType.emailAddress,
+                        'Email',
+                        [
+                          FormBuilderValidators.required(
+                              errorText: 'O e-mail é obrigatório'),
+                          FormBuilderValidators.email(
+                              errorText: "Formato de email inválido"),
+                          FormBuilderValidators.max(40),
+                        ],
+                        _loginBloc.outEmail,
+                        _loginBloc.changeEmail,
+                        "Emaile",
+                        true),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    InputField(
+                        null,
+                        true,
+                        TextInputType.text,
+                        'Senha',
+                        [
+                          FormBuilderValidators.required(
+                              errorText: 'O campo senha é obrigatório'),
+                          FormBuilderValidators.min(5,
+                              errorText:
+                                  "A senha deve ter no minímo 5 caracteres."),
+                          FormBuilderValidators.max(40,
+                              errorText:
+                                  "A senha deve ter no máximo 40 caracteres."),
+                        ],
+                        _loginBloc.outPassword,
+                        _loginBloc.changePassword,
+                        'Senhae',
+                        true),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: StreamBuilder(
+                        stream: _loginBloc.outState,
+                        builder: (context, AsyncSnapshot<LoginState> snapshot) {
+                          switch (snapshot.data) {
+                            case LoginState.IDLE:
+                              return Container();
+                              break;
+
+                            case LoginState.LOADING:
+                              return Loader();
+
+                              break;
+                            default:
+                              return _getButtonLogin(fbKey);
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    FlatButton(
+                      child: Text(
+                        "Esqueceu sua senha?",
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontSize: 15.0,
+                            color: Theme.of(context).cardColor),
+                      ),
+                      onPressed: () {
+                        Navigator.push(context,
+                            NavigatorAnimation(widget: RecoverScreen()));
+                      },
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            FontAwesomeIcons.facebookF,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Entrar com o Facebook",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          )
+                        ],
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.all(
+                        Radius.circular(30),
+                      )),
+                      color: Color.fromRGBO(60, 90, 153, 1),
+                      onPressed: () {},
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset("images/google_icon.png"),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Entrar com o Google",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 16,
+                            ),
+                          )
+                        ],
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      color: Colors.white,
+                      shape: new RoundedRectangleBorder(
+                          side: new BorderSide(color: Colors.grey[300]),
+                          borderRadius: new BorderRadius.all(
+                            Radius.circular(30),
+                          )),
+                      onPressed: () {},
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          Text("Ainda não tem uma conta?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Theme.of(context).cardColor)),
+                          FlatButton(
+                            color: Theme.of(context).primaryColorLight,
+                            child: Text(
+                              "Cadastrar",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14.0,
+                                  color: Theme.of(context).hintColor),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(NavigatorAnimation(
+                                  widget: CadastroClientePage()));
+                            },
+                            highlightColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ))),
+      );
+    }
+
+    if (_formLogin == null) {
+      _formLogin = _buildForm();
     }
 
     return Scaffold(
@@ -95,226 +313,9 @@ class _LoginPageState extends State<LoginPage> {
             return HomeScreenUser();
           }
         } else {
-          return FormBuilder(
-            key: LoginPage.fbKey,
-            child: SingleChildScrollView(
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 30,
-                        ),
-                       
-                        Container(child:Image.asset('images/logo3.png'), height: 110,),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        InputField(
-                            _emailController,
-                            false,
-                            TextInputType.emailAddress,
-                            'Email',
-                            [
-                              FormBuilderValidators.required(
-                                  errorText: 'O e-mail é obrigatório'),
-                              FormBuilderValidators.email(
-                                  errorText: "Formato de email inválido"),
-                              FormBuilderValidators.max(40),
-                            ],
-                            _loginBloc.outEmail,
-                            _loginBloc.changeEmail,
-                            "Emaile",
-                            true),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        InputField(
-                            _senhaController,
-                            true,
-                            TextInputType.text,
-                            'Senha',
-                            [
-                              FormBuilderValidators.required(
-                                  errorText: 'O campo senha é obrigatório'),
-                              FormBuilderValidators.min(5,
-                                  errorText:
-                                      "A senha deve ter no minímo 5 caracteres."),
-                              FormBuilderValidators.max(40,
-                                  errorText:
-                                      "A senha deve ter no máximo 40 caracteres."),
-                            ],
-                            _loginBloc.outPassword,
-                            _loginBloc.changePassword,
-                            'Senhae',
-                            true),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Container(
-                          width: double.infinity,
-                          child: StreamBuilder(
-                            stream: _loginBloc.outState,
-                            builder:
-                                (context, AsyncSnapshot<LoginState> snapshot) {
-                              switch (snapshot.data) {
-                                case LoginState.IDLE:
-                                  return Container();
-                                  break;
-
-                                case LoginState.LOADING:
-                                  return Loader();
-                                default:
-                                  return _getButtonLogin();
-                              }
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        FlatButton(
-                          child: Text(
-                            "Esqueceu sua senha?",
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: 15.0,
-                                color: Theme.of(context).cardColor),
-                          ),
-                          onPressed: () {
-                            Navigator.push(context,
-                                NavigatorAnimation(widget: RecoverScreen()));
-                          },
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                        ),
-                        SizedBox(
-                          height: 25,
-                        ),
-                        FlatButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                FontAwesomeIcons.facebookF,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "Entrar com o Facebook",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              )
-                            ],
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.all(
-                            Radius.circular(30),
-                          )),
-                          color: Color.fromRGBO(60, 90, 153, 1),
-                          onPressed: () {},
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        FlatButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Image.asset("images/google_icon.png"),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "Entrar com o Google",
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 16,
-                                ),
-                              )
-                            ],
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          color: Colors.white,
-                          shape: new RoundedRectangleBorder(
-                              side: new BorderSide(color: Colors.grey[300]),
-                              borderRadius: new BorderRadius.all(
-                                Radius.circular(30),
-                              )),
-                          onPressed: () {},
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Text("Ainda não tem uma conta?",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Theme.of(context).cardColor)),
-                              FlatButton(
-                                color: Theme.of(context).primaryColorLight,
-                                child: Text(
-                                  "Cadastrar",
-                                  style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 14.0,
-                                      color: Theme.of(context).hintColor),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).push(NavigatorAnimation(
-                                      widget: CadastroClientePage()));
-                                },
-                                highlightColor: Colors.transparent,
-                                splashColor: Colors.transparent,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ))),
-          );
+          return _buildForm();
         }
       },
     ));
-  }
-
-  void _listenState() {
-    _loginBloc.outState.listen((state) async {
-      switch (state) {
-        case LoginState.SUCCESS:
-          _model.userData = await _userBloc.currentUser();
-          _model.userFirebase = await FirebaseAuth.instance.currentUser();
-          _model.notifyListeners();
-
-          if (_model.userData['isCompany']) {
-            Navigator.of(context).pushReplacement(
-                NavigatorAnimation(widget: HomeScreenCompany()));
-          } else {
-            Navigator.of(context)
-                .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));
-          }
-
-          break;
-        case LoginState.USER_NOT_VERIFIED:
-          Navigator.of(context).pushReplacement(NavigatorAnimation(
-              widget: EmailConfirmationScreen(
-            typeUser: _userBloc.userData['isCompany'],
-          )));
-          break;
-        default:
-          return Container();
-      }
-
-      return Container();
-    });
   }
 }

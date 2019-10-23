@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:282957820974:android:16da2d611d087104",
         "android_client_info": {
-          "package_name": "com.example.contratacao_funcionarios"
+          "package_name": "com.murilo.iwork"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "282957820974-c73e26fu78aeq1ia31ei3lhbh86k8msr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.contratacao_funcionarios",
+            "package_name": "com.murilo.iwork",
             "certificate_hash": "c2873e5a0f157925a9bd56877b15193ce456b0dc"
           }
         },

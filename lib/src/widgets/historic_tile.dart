@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contratacao_funcionarios/src/shared/currency_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -130,7 +129,7 @@ class HistoricTile extends StatelessWidget {
       case 'FINALIZADO':
         return Row(
           children: <Widget>[
-            Text("Avalie a empresa ", style:TextStyle(fontSize: 16)),
+            Text("Avalie a empresa ", style: TextStyle(fontSize: 16)),
             RatingBar(
               initialRating: 0,
               direction: Axis.horizontal,
@@ -152,6 +151,7 @@ class HistoricTile extends StatelessWidget {
         break;
 
       default:
+        return Container();
     }
   }
 }

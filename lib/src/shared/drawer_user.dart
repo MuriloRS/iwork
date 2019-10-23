@@ -1,3 +1,4 @@
+import 'package:contratacao_funcionarios/main.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/login_page.dart';
@@ -83,8 +84,9 @@ class DrawerUser extends StatelessWidget {
                   onPressed: () {
                     _bloc.signout();
 
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+
+                    Navigator.pushReplacementNamed(context, '/loginPage');
+
                   },
                 ),
               )),
