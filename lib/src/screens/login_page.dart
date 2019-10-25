@@ -292,18 +292,18 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future:
-          Future.wait([futureCurrentUser, FirebaseAuth.instance.currentUser()]),
-      builder: (context, AsyncSnapshot<List<Object>> snapshot) {
+      future: futureCurrentUser,
+      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
           return Loader();
         }
-        _model.userData = snapshot.data.elementAt(0);
-        _model.userFirebase = snapshot.data.elementAt(1);
+
         if (snapshot.data == null) {
           _userBloc.isLoggedIn = false;
         } else {
+          _model.userData = snapshot.data['userData'];
+          _model.userFirebase = snapshot.data['userFirebase'];
           _userBloc.isLoggedIn = true;
         }
         if (_model.userData != null && _userBloc.isLoggedIn) {

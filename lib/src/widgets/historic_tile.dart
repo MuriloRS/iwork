@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
+import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 class HistoricTile extends StatelessWidget {
   Map<String, dynamic> contract;
+  UserBloc bloc;
 
-  HistoricTile(this.contract);
+  HistoricTile(this.contract, this.bloc);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class HistoricTile extends StatelessWidget {
             children: <Widget>[
               Container(
                   width: double.infinity,
-                  color: Colors.grey[300],
+                  color: Colors.grey[100],
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +70,26 @@ class HistoricTile extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      _getSpecificButton(contract, context)
+                      StreamBuilder(
+                        stream: bloc.outContractsState,
+                        builder: (context, AsyncSnapshot<UserState> snapshot) {
+                          if (snapshot.hasData) {
+                            switch (snapshot.data) {
+                              case UserState.LOADING:
+                                return Loader();
+                                break;
+                              case UserState.SUCCESS:
+                                return _getSpecificButton(contract, context);
+
+                                break;
+                              default:
+                                return _getSpecificButton(contract, context);
+                            }
+                          } else {
+                            return Loader();
+                          }
+                        },
+                      )
                     ],
                   ))
             ],
@@ -79,31 +101,47 @@ class HistoricTile extends StatelessWidget {
             color: Theme.of(context).primaryColorLight,
             borderRadius: BorderRadius.all(Radius.circular(5))),
         child: ListTile(
-          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-          title: Text(
-            "Rock'n Play",
-            style: TextStyle(fontSize: 20, color: Theme.of(context).cardColor),
-          ),
-          subtitle: Text("23/09/2019",
+            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            title: Text(
+              "Rock'n Play",
               style:
-                  TextStyle(fontSize: 16, color: Theme.of(context).cardColor)),
-          trailing: RatingBar(
-            initialRating: 4.5,
-            direction: Axis.horizontal,
-            allowHalfRating: true,
-            itemSize: 16,
-            itemCount: 5,
-            itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
-            itemBuilder: (context, _) => Icon(
-              Icons.star,
-              color: Colors.amber,
-              size: 16,
+                  TextStyle(fontSize: 20, color: Theme.of(context).cardColor),
             ),
-            onRatingUpdate: (rating) {
-              print(rating);
-            },
-          ),
-        ));
+            subtitle: Text("23/09/2019",
+                style: TextStyle(
+                    fontSize: 14, color: Theme.of(context).cardColor)),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Avalie", style: TextStyle(color: Colors.white)),
+                RatingBar(
+                  initialRating: double.parse(contract['rating'].toString()),
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemSize: 18,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                    size: 18,
+                  ),
+                  onRatingUpdate: (rating) async {
+                    await Firestore.instance
+                        .collection('contracts')
+                        .document(contract['idDocument'])
+                        .updateData({'rating': rating});
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      duration: Duration(seconds: 3),
+                      backgroundColor: Colors.green,
+                      content: Text("Avaliação de $rating foi salva.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white)),
+                    ));
+                  },
+                ),
+              ],
+            )));
   }
 
   Widget _getSpecificButton(contract, context) {
@@ -114,7 +152,9 @@ class HistoricTile extends StatelessWidget {
           child: Text("Aceitar",
               style: TextStyle(
                   color: Theme.of(context).primaryColor, fontSize: 16)),
-          onPressed: () {},
+          onPressed: () {
+            bloc.statusContractButtonAction(contract);
+          },
         );
         break;
       case 'ANDAMENTO':
@@ -123,7 +163,9 @@ class HistoricTile extends StatelessWidget {
           child: Text("Finalizar",
               style: TextStyle(
                   color: Theme.of(context).primaryColor, fontSize: 16)),
-          onPressed: () {},
+          onPressed: () {
+            bloc.statusContractButtonAction(contract);
+          },
         );
         break;
       case 'FINALIZADO':

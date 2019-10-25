@@ -55,6 +55,7 @@ class LoginBloc extends BlocBase {
 
       userModel.userData = userData['userData'];
       userModel.userFirebase = userData['userFirebase'];
+      userModel.notifyListeners();
 
       if (!(userData['userFirebase'] as FirebaseUser).isEmailVerified) {
         _typeUserController.add(TypeUser.NOT_CONFIRMED);

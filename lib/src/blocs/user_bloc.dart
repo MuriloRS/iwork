@@ -18,19 +18,23 @@ class UserBloc extends BlocBase {
   FirebaseUser _user;
   Map userData;
   bool isLoggedIn;
+  Map<String, dynamic> newContract;
 
   final _stateController = BehaviorSubject<UserState>();
+  final _stateContractsController = BehaviorSubject<UserState>();
 
   Stream<UserState> get outState => _stateController.stream;
+  Stream<UserState> get outContractsState => _stateContractsController.stream;
 
   UserBloc() {
+    _stateContractsController.add(UserState.IDLE);
     _auth = FirebaseAuth.instance;
   }
 
   Future<Map<String, dynamic>> currentUser() async {
     FirebaseUser user = await _auth.currentUser();
 
-    userData = Map<String,dynamic>();
+    userData = Map<String, dynamic>();
 
     if (user != null) {
       userData['userData'] = await _getUserData(user.uid);
@@ -57,10 +61,43 @@ class UserBloc extends BlocBase {
 
       contracts.documents.elementAt(x).data['companyName'] =
           company.data['name'];
+
+      contracts.documents.elementAt(x).data['idDocument'] =
+          contracts.documents.elementAt(x).documentID;
       listContracts.add(contracts.documents.elementAt(x).data);
     }
 
     return listContracts;
+  }
+
+  void statusContractButtonAction(contract) async {
+    _stateContractsController.add(UserState.LOADING);
+
+    try {
+      if (contract['status'] == 'PENDENTE') {
+        await Firestore.instance
+            .collection('contracts')
+            .document(contract['idDocument'])
+            .updateData({'status': 'ANDAMENTO'});
+      } else if (contract['status'] == 'ANDAMENTO') {
+        await Firestore.instance
+            .collection('contracts')
+            .document(contract['idDocument'])
+            .updateData({'status': 'FINALIZADO'});
+      }
+
+      DocumentSnapshot snapshot = await Firestore.instance
+          .collection('contracts')
+          .document(contract['idDocument'])
+          .get();
+
+      newContract = snapshot.data;
+      newContract['idDocument'] = snapshot.documentID;
+
+      _stateContractsController.add(UserState.SUCCESS);
+    } catch (e) {
+      _stateContractsController.add(UserState.FAIL);
+    }
   }
 
   String getUserSkills(userData) {
@@ -133,5 +170,6 @@ class UserBloc extends BlocBase {
     super.dispose();
 
     _stateController.close();
+    _stateContractsController.close();
   }
 }

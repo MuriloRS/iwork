@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-class DrawerUser extends StatelessWidget {
+class DrawerCompany extends StatelessWidget {
   final PageController pageController;
 
-  DrawerUser(this.pageController);
+  DrawerCompany(this.pageController);
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +57,15 @@ class DrawerUser extends StatelessWidget {
                 height: 20,
               ),
               DrawerTile(FontAwesomeIcons.home, "Início", pageController, 0),
-              DrawerTile(FontAwesomeIcons.question, "Como Funciona",
+              DrawerTile(FontAwesomeIcons.fileContract, "Contratos",
                   pageController, 1),
-              DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 2),
+              DrawerTile(FontAwesomeIcons.question, "Como Funciona",
+                  pageController, 2),
+              DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 3),
               DrawerTile(
-                  FontAwesomeIcons.envelope, "Contato", pageController, 3),
+                  FontAwesomeIcons.envelope, "Contato", pageController, 4),
               DrawerTile(FontAwesomeIcons.fileSignature, "Termos e Condições",
-                  pageController, 4),
+                  pageController, 5),
             ],
           ),
         ),
@@ -82,7 +84,9 @@ class DrawerUser extends StatelessWidget {
                   onPressed: () {
                     _bloc.signout();
 
+
                     Navigator.pushReplacementNamed(context, '/loginPage');
+
                   },
                 ),
               )),

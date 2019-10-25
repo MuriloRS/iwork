@@ -35,7 +35,7 @@ class HomeUserTab extends StatelessWidget {
             return Container(
                 padding: EdgeInsets.all(15), child: Center(child: Loader()));
           } else {
-            List<Widget> listContracts = new List();
+            List<Map<String, dynamic>> listContracts = new List();
             int numberContractsFinished = 0;
 
             if (snapshot.data == null) {
@@ -52,10 +52,11 @@ class HomeUserTab extends StatelessWidget {
             }
 
             snapshot.data.forEach((c) {
-              if (c['status'] == 'FINISHED') {
+              if (c['status'] == 'FINALIZADO') {
                 numberContractsFinished++;
               }
-              listContracts.add(HistoricTile(c));
+
+              listContracts.add(c);
             });
 
             return Container(
@@ -96,6 +97,7 @@ class HomeUserTab extends StatelessWidget {
                                   style: TextStyle(fontSize: 16),
                                 ),
                                 RatingBar(
+                                  ignoreGestures: true,
                                   initialRating: _model.userData['rating'],
                                   direction: Axis.horizontal,
                                   allowHalfRating: true,
@@ -120,20 +122,29 @@ class HomeUserTab extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      height: MediaQuery.of(context).size.height - 260,
-                      child: ListView.separated(
-                        itemCount: listContracts.length,
-                        separatorBuilder: (context, i) {
-                          return SizedBox(
-                            height: 5,
-                          );
-                        },
-                        itemBuilder: (context, i) {
-                          return listContracts.elementAt(i);
-                        },
-                      ))
+                  StreamBuilder(
+                    stream: bloc.outContractsState,
+                    builder: (context, AsyncSnapshot<UserState> snapshot) {
+                      if (snapshot.hasData) {
+                        switch (snapshot.data) {
+                          case UserState.LOADING:
+                            return Loader();
+                            break;
+                          case UserState.SUCCESS:
+                            listContracts = _listContractsUpdted(
+                                bloc.newContract, listContracts);
+
+                            return _getListView(listContracts, context);
+
+                            break;
+                          default:
+                            return _getListView(listContracts, context);
+                        }
+                      } else {
+                        return Loader();
+                      }
+                    },
+                  )
                 ],
               ),
             );
@@ -141,5 +152,43 @@ class HomeUserTab extends StatelessWidget {
         },
       ))
     ]));
+  }
+
+  List<Map<String, dynamic>> _listContractsUpdted(
+      newContract, List<Map<String, dynamic>> listContracts) {
+    List<Map<String, dynamic>> listUpdated = new List();
+
+    listContracts.forEach((map) {
+      if (map['idDocument'] == newContract['idDocument']) {
+        listUpdated.add(newContract);
+      } else {
+        listUpdated.add(map);
+      }
+    });
+
+    return listUpdated;
+  }
+
+  Widget _getListView(listContracts, context) {
+    List<Widget> listContractsListview = new List();
+
+    listContracts.forEach((c) {
+      listContractsListview.add(HistoricTile(c, bloc));
+    });
+
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        height: MediaQuery.of(context).size.height - 260,
+        child: ListView.separated(
+          itemCount: listContractsListview.length,
+          separatorBuilder: (context, i) {
+            return SizedBox(
+              height: 5,
+            );
+          },
+          itemBuilder: (context, i) {
+            return listContractsListview.elementAt(i);
+          },
+        ));
   }
 }
