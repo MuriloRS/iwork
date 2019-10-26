@@ -164,7 +164,7 @@ class CompanyBloc extends BlocBase {
                                   al.buildDialogTerms(context, document,
                                       buildAlertSendContract);
                                 },
-                              ) 
+                              )
                             ]),
                       ]))));
     });
@@ -312,7 +312,7 @@ class CompanyBloc extends BlocBase {
     await Firestore.instance
         .collection('contracts')
         .document(contractId)
-        .updateData({'rating': newRating.toString()});
+        .updateData({'ratingCompany': newRating.toString()});
   }
 
   Future<QuerySnapshot> searchCompanyContracts(idCompany) async {

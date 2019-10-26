@@ -64,8 +64,7 @@ class DrawerCompany extends StatelessWidget {
               DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 3),
               DrawerTile(
                   FontAwesomeIcons.envelope, "Contato", pageController, 4),
-              DrawerTile(FontAwesomeIcons.fileSignature, "Termos e Condições",
-                  pageController, 5),
+             
             ],
           ),
         ),

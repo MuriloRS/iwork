@@ -28,7 +28,7 @@ class CompanyContractsTab extends StatelessWidget {
                         ConnectionState.none.index ||
                     snapshot.connectionState.index ==
                         ConnectionState.waiting.index) {
-                  return Center(child:Loader());
+                  return Center(child: Loader());
                 } else {
                   List<Widget> listContracts = new List();
 
@@ -79,9 +79,7 @@ class CompanyContractsTab extends StatelessWidget {
                           ),
                           doc.data['status'] == 'FINALIZADO'
                               ? Column(children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
+                                  
                                   Row(
                                     children: <Widget>[
                                       Text(
@@ -89,14 +87,14 @@ class CompanyContractsTab extends StatelessWidget {
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             color: Colors.grey[200],
-                                            fontSize: 22),
+                                            fontSize: 18),
                                       ),
                                       SizedBox(
                                         width: 15,
                                       ),
                                       RatingBar(
-                                        initialRating:
-                                            double.parse(doc.data['rating']),
+                                        initialRating: double.parse(
+                                            doc.data['rating'].toString()),
                                         direction: Axis.horizontal,
                                         allowHalfRating: true,
                                         unratedColor: Colors.grey[200],
@@ -112,6 +110,16 @@ class CompanyContractsTab extends StatelessWidget {
                                         onRatingUpdate: (rating) {
                                           bloc.updateRatingContract(
                                               doc.documentID, rating);
+
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      "A avaliação de $rating foi salva",
+                                                      textAlign:
+                                                          TextAlign.center),
+                                                  backgroundColor: Colors.green,
+                                                  duration:
+                                                      Duration(seconds: 3)));
                                         },
                                       ),
                                     ],

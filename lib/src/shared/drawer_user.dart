@@ -62,8 +62,7 @@ class DrawerUser extends StatelessWidget {
               DrawerTile(FontAwesomeIcons.user, "Conta", pageController, 2),
               DrawerTile(
                   FontAwesomeIcons.envelope, "Contato", pageController, 3),
-              DrawerTile(FontAwesomeIcons.fileSignature, "Termos e Condições",
-                  pageController, 4),
+              
             ],
           ),
         ),
