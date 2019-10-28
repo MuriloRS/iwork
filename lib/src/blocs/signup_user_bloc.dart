@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum SignupState { IDLE, LOADING, SUCCESS, FAIL, ERROR_EMAIL }
 
 class SignupUserBloc extends BlocBase {
-  UserProviderModel _model;
+  UserModel _model;
 
   //CONTROLLERS
   final _singupController = BehaviorSubject<Map<String, dynamic>>();
@@ -41,10 +41,11 @@ class SignupUserBloc extends BlocBase {
         AuthResult result = await _auth.createUserWithEmailAndPassword(
             email: data['email'], password: data['password']);
 
-        _model.userFirebase = result.user;
+        _model.documentId = result.user.uid;
+        _model.notifyListeners();
 
         //Envia um email de confirmação de conta
-        await _model.userFirebase.sendEmailVerification();
+        await result.user.sendEmailVerification();
 
         _model.notifyListeners();
       } catch (e) {

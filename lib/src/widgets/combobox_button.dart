@@ -1,10 +1,10 @@
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 class ComboboxButton extends StatefulWidget {
   final List<DropdownMenuItem> options;
   final String hintText;
-  final UserProviderModel model;
+  final UserModel model;
 
   ComboboxButton(
       {@required this.options, @required this.hintText, @required this.model});
@@ -47,8 +47,7 @@ class _DropdownState extends State<ComboboxButton> {
                   selected = newValue;
                 });
 
-                widget.model.userData['acceptAnyTime'] =
-                    newValue == 'Sim' ? true : false;
+            
               },
               isExpanded: true,
               elevation: 5,

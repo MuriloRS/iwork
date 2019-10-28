@@ -1,6 +1,6 @@
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
@@ -22,7 +22,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
   TextEditingController _telefoneInputController;
   GlobalKey<AutoCompleteTextFieldState<String>> _citieController =
       new GlobalKey();
-  UserProviderModel _model;
+  UserModel _model;
   AccountUserBloc _bloc;
 
   @override
@@ -30,12 +30,12 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
     _nomeInputController = TextEditingController();
     _emailInputController = TextEditingController();
     _telefoneInputController = TextEditingController();
-    _model = Provider.of<UserProviderModel>(context);
+    _model = Provider.of<UserModel>(context);
     _bloc = AccountUserBloc();
 
-    _nomeInputController.text = _model.userData['name'];
-    _emailInputController.text = _model.userFirebase.email;
-    _telefoneInputController.text = _model.userData['telephone'];
+    _nomeInputController.text = _model.name;
+    _emailInputController.text = _model.email;
+    _telefoneInputController.text = _model.telephone;
 
     _listenOutState();
 
@@ -51,7 +51,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                     _nomeInputController,
                     false,
                     TextInputType.text,
-                    'Nome Completo*',
+                    'Empresa*',
                     [
                       FormBuilderValidators.required(
                           errorText: "O campo nome é obrigatório")
@@ -125,7 +125,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                           _model,
                           _bloc.outCities,
                           _bloc.changeCities,
-                          _model.userData['city']);
+                          _model.city);
                     }
                   },
                 ),
@@ -146,8 +146,8 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                           child: ButtonInput.getButton(
                               TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar',
                               () {
-                            _model.userData['name'] = _nomeInputController.text;
-                            _model.userData['telephone'] =
+                            _model.name = _nomeInputController.text;
+                            _model.telephone =
                                 _telefoneInputController.text;
 
                             _bloc.saveController.add(_model);

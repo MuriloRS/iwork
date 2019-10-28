@@ -37,10 +37,7 @@ class UserBloc extends BlocBase {
     userData = Map<String, dynamic>();
 
     if (user != null) {
-      userData['userData'] = await _getUserData(user.uid);
-      userData['userFirebase'] = user;
-
-      return userData;
+      return await _getUserData(user.uid);
     } else {
       return null;
     }
@@ -100,8 +97,8 @@ class UserBloc extends BlocBase {
     }
   }
 
-  String getUserSkills(userData) {
-    return userData['skills']
+  String getUserSkills(skills) {
+    return skills
         .toString()
         .trim()
         .replaceAll(',', ', ')
@@ -140,7 +137,7 @@ class UserBloc extends BlocBase {
     if (user.isEmailVerified) {
       _stateController.add(UserState.USER_VERIFIED);
     } else {
-      _stateController.add(UserState.FAIL);
+      _stateController.add(UserState.USER_NOT_VERIFIED);
     }
   }
 

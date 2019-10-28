@@ -14,14 +14,14 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 
-enum StateActual { IDLE, LOADING, SUCCESS, FAIL, EMPTY }
+enum StateCurrent { IDLE, LOADING, SUCCESS, FAIL, EMPTY }
 
 class CompanyBloc extends BlocBase {
-  final stateController = BehaviorSubject<StateActual>();
+  final stateController = BehaviorSubject<StateCurrent>();
   final searchProfessionalController = BehaviorSubject<Map<String, dynamic>>();
   String docCompany;
 
-  Stream<StateActual> get outState => stateController.stream;
+  Stream<StateCurrent> get outState => stateController.stream;
   Stream<Map<String, dynamic>> get outSearchProfessional =>
       searchProfessionalController.stream;
 
@@ -35,8 +35,15 @@ class CompanyBloc extends BlocBase {
     this.docCompany = docCompany;
   }
 
+  Future<QuerySnapshot> searchProfessionalContracts(idProfessional) async {
+    return await Firestore.instance
+        .collection('contracts')
+        .where('professionalId', isEqualTo: idProfessional)
+        .getDocuments();
+  }
+
   void searchProfessionals(params) async {
-    stateController.add(StateActual.LOADING);
+    stateController.add(StateCurrent.LOADING);
     QuerySnapshot snapshot;
 
     snapshot = await Firestore.instance
@@ -53,7 +60,7 @@ class CompanyBloc extends BlocBase {
           list.add(_buildSwiperItem(params['context'], doc));
         }
       } else if (params['rating'] != null) {
-        if (doc.data['rating'] >= params['rating']) {
+        if (double.parse(doc.data['rating']) >= params['rating']) {
           list.add(_buildSwiperItem(params['context'], doc));
         }
       } else if (params['funcao'] != null) {
@@ -64,10 +71,13 @@ class CompanyBloc extends BlocBase {
         list.add(_buildSwiperItem(params['context'], doc));
       }
     });
-
-    listProfessionals = list;
-
-    stateController.add(StateActual.SUCCESS);
+    if (list.length == 0) {
+      stateController.add(StateCurrent.EMPTY);
+    } else {
+      listProfessionals = list;
+      stateController.add(StateCurrent.SUCCESS);
+    }
+    
   }
 
   SwiperItem _buildSwiperItem(context, DocumentSnapshot document) {
@@ -90,11 +100,13 @@ class CompanyBloc extends BlocBase {
                           children: <Widget>[
                             Text("Avaliação: ", style: styleDefault),
                             RatingBar(
-                              initialRating: document.data['rating'],
+                              initialRating:
+                                  double.parse(document.data['rating']),
                               direction: Axis.horizontal,
                               allowHalfRating: true,
                               itemSize: 18,
                               itemCount: 5,
+                              unratedColor: Colors.grey[350],
                               itemPadding:
                                   EdgeInsets.symmetric(horizontal: 1.0),
                               itemBuilder: (context, _) => Icon(
@@ -131,7 +143,14 @@ class CompanyBloc extends BlocBase {
                         SizedBox(
                           height: 20,
                         ),
-                        Text("Funções: ${document.data['skills'].toString()}",
+                        Text(
+                            "Funções:" +
+                                ((document.data['skills'] as List).length > 0
+                                    ? document.data['skills']
+                                        .toString()
+                                        .replaceAll('[]', '')
+                                        .toString()
+                                    : " Sem experiência"),
                             style: styleDefault),
                         SizedBox(
                           height: 25,

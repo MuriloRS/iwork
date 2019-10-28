@@ -1,6 +1,6 @@
 import 'package:contratacao_funcionarios/src/blocs/signup_user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_model.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+
 import 'package:contratacao_funcionarios/src/screens/signup_company_page.dart';
 import 'package:contratacao_funcionarios/src/screens/email_confirmation_screen.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
@@ -21,7 +21,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
       GlobalKey<FormBuilderState>();
 
   SignupUserBloc _userBloc;
-  UserProviderModel model;
+  UserModel model;
 
   TextEditingController _cpfController = new TextEditingController();
   TextEditingController _cnpjController;
@@ -32,7 +32,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
 
   @override
   Widget build(BuildContext context) {
-    model = Provider.of<UserProviderModel>(context);
+    model = Provider.of<UserModel>(context);
 
     _userBloc = SignupUserBloc(model);
 
@@ -152,10 +152,9 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
     key.currentState.save();
 
     if (key.currentState.validate()) {
-      _userBloc.doSignUp.add(user.toMap(user));
+      _userBloc.doSignUp.add(user.toMap());
     }
   }
-
 
   FormBuilderTextField _buildTextBuildName() {
     return FormBuilderTextField(
@@ -327,10 +326,17 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
         ),
         onPressed: () {
           UserModel user = new UserModel(
-              cpf: _cpfController.text,
+              identificador: _cpfController.text,
               email: _emailController.text,
               senha: _passController.text,
-              nome: _nameController.text,
+              name: _nameController.text,
+              city: '',
+              curriculum: '',
+              documentId: '',
+              profileCompleted: false,
+              rating: '0',
+              skills: [],
+              telephone: '',
               isCompany: false);
 
           signupActionButton(_fbProfessional, user);

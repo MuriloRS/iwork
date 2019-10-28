@@ -1,6 +1,6 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/shared/file_picker.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:path/path.dart' as p;
 
 class DownloadInputButton extends StatefulWidget {
   final AccountUserBloc _bloc;
-  final UserProviderModel _model;
+  final UserModel _model;
 
   DownloadInputButton(this._bloc, this._model);
   @override
@@ -23,9 +23,9 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
 
   @override
   Widget build(BuildContext context) {
-    basename = widget._model.userData['curriculum'] == '' && isCurriculumLoaded
+    basename = widget._model.curriculum == '' && isCurriculumLoaded
         ? p.basename(widget._bloc.curriculum.path)
-        : widget._model.userData['curriculum'];
+        : widget._model.curriculum;
 
     _userBloc = UserBloc();
 
@@ -50,8 +50,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
                     ),
                   ),
                   child: FlatButton(
-                    child: !isCurriculumLoaded &&
-                            widget._model.userData['curriculum'] == ''
+                    child: !isCurriculumLoaded && widget._model.curriculum == ''
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -97,7 +96,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
                           ),
                     color: Colors.white,
                     onPressed: () async {
-                      if (widget._model.userData['curriculum'] != '') {
+                      if (widget._model.curriculum != '') {
                         widget._bloc.openPdf(snapshot.data);
                       } else {
                         widget._bloc.curriculum = await FilePicker.getFile(
@@ -111,7 +110,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
                       }
                     },
                   )),
-              !isCurriculumLoaded && widget._model.userData['curriculum'] == ''
+              !isCurriculumLoaded && widget._model.curriculum == ''
                   ? Text(
                       "Anexe o pdf do seu currículo.",
                       style: TextStyle(fontSize: 12, color: Colors.grey[500]),

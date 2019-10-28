@@ -1,6 +1,5 @@
 import 'package:contratacao_funcionarios/src/blocs/signup_user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_company_model.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/screens/email_confirmation_screen.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
@@ -19,7 +18,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
       GlobalKey<FormBuilderState>();
 
   SignupUserBloc _userBloc;
-  UserProviderModel model;
+  UserModel model;
 
   TextEditingController _cnpjController = new TextEditingController();
   TextEditingController _passController = new TextEditingController();
@@ -29,7 +28,7 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
 
   @override
   Widget build(BuildContext context) {
-    model = Provider.of<UserProviderModel>(context);
+    model = Provider.of<UserModel>(context);
     _userBloc = SignupUserBloc(model);
 
     _listenOutState();
@@ -127,11 +126,18 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
               fontWeight: FontWeight.w600),
         ),
         onPressed: () {
-          UserCompanyModel user = new UserCompanyModel(
-              cnpj: _cnpjController.text,
+          UserModel user = new UserModel(
+              identificador: _cnpjController.text,
               email: _emailController.text,
               senha: _passController.text,
-              nome: _nameController.text,
+              name: _nameController.text,
+              city: '',
+              curriculum: '',
+              documentId: '',
+              profileCompleted: false,
+              rating: '0',
+              skills: [],
+              telephone: '',
               isCompany: true);
 
           signupActionButton(_fbProfessional, user);
@@ -142,11 +148,11 @@ class _SignupCompanyPageState extends State<SignupCompanyPage> {
   }
 
   void signupActionButton(
-      GlobalKey<FormBuilderState> key, UserCompanyModel user) {
+      GlobalKey<FormBuilderState> key, UserModel user) {
     key.currentState.save();
 
     if (key.currentState.validate()) {
-      _userBloc.doSignUp.add(user.toMap(user));
+      _userBloc.doSignUp.add(user.toMap());
     }
   }
 

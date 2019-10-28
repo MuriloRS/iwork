@@ -1,4 +1,4 @@
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class HowWorksTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    UserProviderModel _model = Provider.of<UserProviderModel>(context);
+    UserModel _model = Provider.of<UserModel>(context);
 
     return SafeArea(
         child: CustomScrollView(slivers: <Widget>[
@@ -16,7 +16,7 @@ class HowWorksTab extends StatelessWidget {
       SliverToBoxAdapter(
         child: Container(
             padding: EdgeInsets.all(16),
-            child: _model.userData['isCompany'] == false ? Column(
+            child: _model.isCompany == false ? Column(
               children: <Widget>[
                 SizedBox(
                   height: 10,

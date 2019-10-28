@@ -1,5 +1,5 @@
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
 import 'package:contratacao_funcionarios/src/widgets/historic_tile.dart';
@@ -16,10 +16,10 @@ class HomeUserTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserProviderModel _model = Provider.of<UserProviderModel>(context);
+    UserModel _model = Provider.of<UserModel>(context);
     bloc = new UserBloc();
 
-    if (!_model.userData['profileCompleted']) {
+    if (!_model.profileCompleted) {
       return AccountUserTab();
     }
 
@@ -28,7 +28,7 @@ class HomeUserTab extends StatelessWidget {
       CustomSliverAppbar("Início"),
       SliverToBoxAdapter(
           child: FutureBuilder(
-        future: bloc.getUserContracts(_model.userFirebase.uid),
+        future: bloc.getUserContracts(_model.documentId),
         builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState.index == ConnectionState.none.index ||
               snapshot.connectionState.index == ConnectionState.waiting.index) {
@@ -37,19 +37,6 @@ class HomeUserTab extends StatelessWidget {
           } else {
             List<Map<String, dynamic>> listContracts = new List();
             int numberContractsFinished = 0;
-
-            if (snapshot.data == null) {
-              return Container(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                          "Nenhum Contrato Recebido, para aumentar suas chances vá em sua conta e ative a opção 'Aceitar trabalhos sem experiência'.",
-                          style: TextStyle(color: Colors.white, fontSize: 20)),
-                    ],
-                  ));
-            }
 
             snapshot.data.forEach((c) {
               if (c['status'] == 'FINALIZADO') {
@@ -73,7 +60,7 @@ class HomeUserTab extends StatelessWidget {
                           textDirection: TextDirection.ltr,
                           children: <Widget>[
                             Text(
-                              _model.userData['name'],
+                              _model.name,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 22, fontWeight: FontWeight.w600),
@@ -98,9 +85,10 @@ class HomeUserTab extends StatelessWidget {
                                 ),
                                 RatingBar(
                                   ignoreGestures: true,
-                                  initialRating: _model.userData['rating'],
+                                  initialRating: double.parse(_model.rating),
                                   direction: Axis.horizontal,
                                   allowHalfRating: true,
+                                  unratedColor: Colors.grey[350],
                                   itemSize: 18,
                                   itemCount: 5,
                                   itemPadding:

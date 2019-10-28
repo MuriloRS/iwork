@@ -1,5 +1,5 @@
 import 'package:contratacao_funcionarios/src/blocs/company_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_company_tab.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 
 class HomeCompanyTab extends StatelessWidget {
-  UserProviderModel _model;
+  UserModel _model;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   static final GlobalKey<SwipeStackState> swipeKey =
       new GlobalKey<SwipeStackState>();
@@ -21,10 +21,10 @@ class HomeCompanyTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _model = Provider.of<UserProviderModel>(context);
-    bloc = CompanyBloc(_model.userFirebase.uid);
+    _model = Provider.of<UserModel>(context);
+    bloc = CompanyBloc(_model.documentId);
 
-    if (!_model.userData['profileCompleted']) {
+    if (!_model.profileCompleted) {
       return AccountCompanyTab();
     }
     bloc.searchProfessionalController
@@ -74,45 +74,50 @@ class HomeCompanyTab extends StatelessWidget {
         body: SingleChildScrollView(
             child: Container(
           padding: EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 5),
-          height: MediaQuery.of(context).size.height -170,
+          height: MediaQuery.of(context).size.height - 170,
           child: StreamBuilder(
             stream: bloc.outState,
             builder: (context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.data == StateActual.LOADING ||
+              if (snapshot.data == StateCurrent.LOADING ||
                   !snapshot.hasData ||
                   snapshot.connectionState.index ==
                       ConnectionState.none.index ||
                   snapshot.connectionState.index ==
                       ConnectionState.waiting.index) {
                 return Loader();
-              } else if (snapshot.data == StateActual.EMPTY) {
-                return Center(
-                    child: Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(15),
-                  child: Text(
-                      "Nenhum profissional encontrado! Tente mudar o filtro clicando botão abaixo.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 22)),
-                ));
               } else {
-                if (bloc.listProfessionals.length == 0) {
-                  return Text('Nenhum Profissional Encontrado.');
+                if (StateCurrent.EMPTY == snapshot.data) {
+                  return Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Nenhum Profissional Encontrado, tente alterar o filtro.',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return SwipeStack(
+                    key: swipeKey,
+                    children: bloc.listProfessionals,
+                    visibleCount: 3,
+                    stackFrom: StackFrom.Top,
+                    translationInterval: 6,
+                    scaleInterval: 0.03,
+                    historyCount: 3,
+                    onEnd: () => bloc.stateController.add(StateCurrent  .EMPTY),
+                    onSwipe: (int index, SwiperPosition position) =>
+                        debugPrint("onSwipe $index $position"),
+                    onRewind: (int index, SwiperPosition position) =>
+                        debugPrint("onRewind $index $position"),
+                  );
                 }
-                return SwipeStack(
-                  key: swipeKey,
-                  children: bloc.listProfessionals,
-                  visibleCount: 3,
-                  stackFrom: StackFrom.Top,
-                  translationInterval: 6,
-                  scaleInterval: 0.03,
-                  historyCount: 3,
-                  onEnd: () => bloc.stateController.add(StateActual.EMPTY),
-                  onSwipe: (int index, SwiperPosition position) =>
-                      debugPrint("onSwipe $index $position"),
-                  onRewind: (int index, SwiperPosition position) =>
-                      debugPrint("onRewind $index $position"),
-                );
               }
             },
           ),

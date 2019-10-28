@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/blocs/company_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -9,20 +9,20 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class CompanyContractsTab extends StatelessWidget {
-  UserProviderModel _model;
+  UserModel _model;
   CompanyBloc bloc;
 
   @override
   Widget build(BuildContext context) {
-    _model = Provider.of<UserProviderModel>(context);
-    bloc = new CompanyBloc(_model.userFirebase.uid);
+    _model = Provider.of<UserModel>(context);
+    bloc = new CompanyBloc(_model.documentId);
 
     return DefaultSliverScaffold(
         titleScaffold: "Contratos",
         content: Container(
             padding: EdgeInsets.all(15),
             child: FutureBuilder(
-              future: bloc.searchCompanyContracts(_model.userFirebase.uid),
+              future: bloc.searchCompanyContracts(_model.documentId),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState.index ==
                         ConnectionState.none.index ||

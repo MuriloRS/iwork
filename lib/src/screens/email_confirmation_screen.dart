@@ -1,8 +1,10 @@
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/screens/company_screens.dart/home_screen_company.dart';
 import 'package:contratacao_funcionarios/src/screens/user_screens/home_screen_user.dart';
+import 'package:contratacao_funcionarios/src/shared/alerts.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,42 +12,34 @@ import 'package:provider/provider.dart';
 class EmailConfirmationScreen extends StatelessWidget {
   UserBloc _userBloc;
   int typeUser;
-  UserProviderModel model;
+  UserModel model;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   EmailConfirmationScreen({@required this.typeUser});
 
   @override
   Widget build(BuildContext context) {
-    model = Provider.of<UserProviderModel>(context);
+    model = Provider.of<UserModel>(context);
 
     _userBloc = UserBloc();
 
     return Material(
         child: SafeArea(
             child: StreamBuilder(
-      stream: _userBloc.outState,
-      builder: (context, AsyncSnapshot<UserState> snapshot) {
-          switch (snapshot.data) {
-            case UserState.LOADING:
-              return Loader();
-              break;
-            case UserState.USER_VERIFIED:
-              if (typeUser == 1) {
-                return HomeScreenUser();
-              } else {
-                return HomeScreenCompany();
-              }
-
-              break;
-            case UserState.SUCCESS:
-              return SnackBar(
-                content: Text("Email enviado"),
-                duration: Duration(seconds: 5),
-              );
-            default:
-              return _buildBody(context);
+      stream: auth.onAuthStateChanged,
+      builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+        if (snapshot.connectionState.index == ConnectionState.none.index ||
+            snapshot.connectionState.index == ConnectionState.waiting.index) {
+          return Loader();
+        } else if (snapshot.data.isEmailVerified) {
+          if (this.typeUser == 1) {
+            return HomeScreenUser();
+          } else {
+            return HomeScreenCompany();
           }
-        
+        } else {
+          return _buildBody(context);
+        }
       },
     )));
   }
@@ -86,15 +80,15 @@ class EmailConfirmationScreen extends StatelessWidget {
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.green),
+                  color: Theme.of(context).primaryColor),
             ),
-            color: Colors.grey[200],
+            color: Theme.of(context).accentColor,
             onPressed: () async {
-              await model.userFirebase.reload();
-              model.userData = await _userBloc.currentUser();
+              dynamic currentUser = await _userBloc.currentUser();
+              model.ofMap(currentUser);
               model.notifyListeners();
-              
-              _userBloc.verifyEmailConfirmed();
+
+              await _userBloc.verifyEmailConfirmed();
             },
           )
         ],

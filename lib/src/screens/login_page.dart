@@ -1,7 +1,6 @@
 import 'package:contratacao_funcionarios/src/blocs/login_bloc.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_model.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:contratacao_funcionarios/src/screens/company_screens.dart/home_screen_company.dart';
 import 'package:contratacao_funcionarios/src/screens/email_confirmation_screen.dart';
 import 'package:contratacao_funcionarios/src/screens/recover_screen.dart';
@@ -24,7 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   LoginBloc _loginBloc;
   UserBloc _userBloc = UserBloc();
-  UserProviderModel _model;
+  UserModel _model;
   Future<Map<String, dynamic>> futureCurrentUser;
 
   Widget _formLogin;
@@ -37,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    _model = Provider.of<UserProviderModel>(context);
+    _model = Provider.of<UserModel>(context);
     _loginBloc = LoginBloc(context);
 
     void _listenState() {
@@ -249,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: new BorderRadius.all(
                             Radius.circular(30),
                           )),
-                      onPressed: () {},
+                      onPressed: _loginBloc.googleSignIn,
                     ),
                     SizedBox(
                       height: 20,
@@ -292,22 +291,23 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future: futureCurrentUser,
-      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+      future: Future.wait([futureCurrentUser, FirebaseAuth.instance.currentUser()]),
+      builder: (context, AsyncSnapshot<List<Object>> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
           return Loader();
         }
 
-        if (snapshot.data == null) {
+        if (snapshot.data.elementAt(0) == null) {
           _userBloc.isLoggedIn = false;
         } else {
-          _model.userData = snapshot.data['userData'];
-          _model.userFirebase = snapshot.data['userFirebase'];
+          _model.ofMap(snapshot.data.elementAt(0));
+          _model.documentId = (snapshot.data.elementAt(1) as FirebaseUser).uid;
+
           _userBloc.isLoggedIn = true;
         }
-        if (_model.userData != null && _userBloc.isLoggedIn) {
-          if (_model.userData['isCompany'] == true) {
+        if ( _userBloc.isLoggedIn) {
+          if (_model.isCompany == true) {
             return HomeScreenCompany();
           } else {
             return HomeScreenUser();

@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
 import 'package:contratacao_funcionarios/src/models/user_model.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -49,12 +50,12 @@ class LoginBloc extends BlocBase {
       _userAuth = await _auth.signInWithEmailAndPassword(
           email: user.email, password: user.senha);
 
-      UserProviderModel userModel = Provider.of<UserProviderModel>(context);
+      UserModel userModel = Provider.of<UserModel>(context);
 
       Map<String, dynamic> userData = await new UserBloc().currentUser();
 
-      userModel.userData = userData['userData'];
-      userModel.userFirebase = userData['userFirebase'];
+      userModel.ofMap(userData['userData']
+      );
       userModel.notifyListeners();
 
       if (!(userData['userFirebase'] as FirebaseUser).isEmailVerified) {
@@ -80,6 +81,41 @@ class LoginBloc extends BlocBase {
       }
 
       _stateController.add(LoginState.FAIL);
+    }
+  }
+
+  void googleSignIn() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+
+    GoogleSignInAccount account;
+
+    try {
+      account = await _googleSignIn.signIn();
+
+      UserModel userModel = Provider.of<UserModel>(context);
+      userModel.ofMap({
+        'identificador': '',
+        'curriculum': '',
+        'email': account.email,
+        'isCompany': false,
+        'name': '',
+        'rating': '0',
+        'senha': '',
+      });
+
+      userModel.notifyListeners();
+
+      await Firestore.instance.collection('users').add(userModel.toMap());
+
+      _typeUserController.add(TypeUser.USER);
+      _stateController.add(LoginState.SUCCESS);
+    } catch (error) {
+      print(error);
     }
   }
 

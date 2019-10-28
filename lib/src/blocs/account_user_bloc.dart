@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
@@ -22,7 +22,7 @@ class AccountUserBloc extends BlocBase {
   final citiesController = BehaviorSubject<String>();
   final telephoneController = BehaviorSubject<String>();
   final curriculumController = BehaviorSubject<String>();
-  final saveController = BehaviorSubject<UserProviderModel>();
+  final saveController = BehaviorSubject<UserModel>();
 
   //STREAMS
   Stream<AccountUserState> get outState => stateController.stream;
@@ -32,7 +32,7 @@ class AccountUserBloc extends BlocBase {
   Stream<String> get outCities => citiesController.stream;
   Stream<String> get outCurriculum => curriculumController.stream;
   Stream<String> get outTelephone => telephoneController.stream;
-  Stream<UserProviderModel> get outSave => saveController.stream;
+  Stream<UserModel> get outSave => saveController.stream;
 
   //SINKS
   Function(String) get changeSkills => skillsController.sink.add;
@@ -40,7 +40,7 @@ class AccountUserBloc extends BlocBase {
   Function(String) get changeCities => citiesController.sink.add;
   Function(String) get changeCurriculum => curriculumController.sink.add;
   Function(String) get changeTelephone => telephoneController.sink.add;
-  Sink<UserProviderModel> get changeSave => saveController.sink;
+  Sink<UserModel> get changeSave => saveController.sink;
 
   AccountUserBloc() {
     saveController.listen(_saveAccountDetail);
@@ -68,54 +68,50 @@ class AccountUserBloc extends BlocBase {
     return listCities;
   }
 
-  _saveAccountDetail(UserProviderModel user) {
+  _saveAccountDetail(UserModel user) {
     stateController.add(AccountUserState.LOADING);
 
     try {
       //VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
-      if (user.userData['name'] == null || user.userData['name'] == '') {
+      if (user.name == null || user.name == '') {
         nameController.addError("O campo nome é obrigatório");
         stateController.add(AccountUserState.FAIL);
 
         return;
       }
-      if (user.userData['city'] == null || user.userData['city'] == '') {
+      if (user.city == null || user.city == '') {
         citiesController.addError("O campo cidade é obrigatório");
         stateController.add(AccountUserState.FAIL);
         return;
       }
 
 //Se for usuário comum então o telefone é obrigatório
-      if (!user.userData['isCompany']) {
-        if (user.userData['telephone'] == null ||
-            user.userData['telephone'] == '') {
+      if (!user.isCompany) {
+        if (user.telephone == null || user.telephone == '') {
           telephoneController.addError("O campo telefone é obrigatório");
           stateController.add(AccountUserState.FAIL);
           return;
         }
       }
-      user.userData['profileCompleted'] = true;
+      user.profileCompleted = true;
 
       if (this.curriculum != null) {
-        user.userData['curriculum'] = p.basename(this.curriculum.path);
-
-
- 
+        user.curriculum = p.basename(this.curriculum.path);
       } else {
-        if (user.userData['curriculum'] != '' && !user.userData['isCompany']) {
+        if (user.curriculum != '' && !user.isCompany) {
           FirebaseStorage.instance
               .ref()
-              .child(user.userFirebase.uid + "/" + user.userData['curriculum'])
+              .child(user.documentId + "/" + user.documentId)
               .delete();
         }
 
-        user.userData['curriculum'] = '';
+        user.curriculum = '';
       }
 
       Firestore.instance
           .collection("users")
-          .document(user.userFirebase.uid)
-          .updateData(user.userData);
+          .document(user.documentId)
+          .updateData(user.toMap());
 
       stateController.add(AccountUserState.SUCCESS);
     } catch (e) {
@@ -131,7 +127,7 @@ class AccountUserBloc extends BlocBase {
     }
   }
 
-  void deleteCurriculum(UserProviderModel model) {
+  void deleteCurriculum(UserModel model) {
     curriculum = null;
 
     _saveAccountDetail(model);

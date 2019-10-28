@@ -8,14 +8,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:282957820974:android:16da2d611d087104",
+        "mobilesdk_app_id": "1:282957820974:android:de81aef7da4586b06b5bbf",
         "android_client_info": {
           "package_name": "com.murilo.iwork"
         }
       },
       "oauth_client": [
         {
-          "client_id": "282957820974-c73e26fu78aeq1ia31ei3lhbh86k8msr.apps.googleusercontent.com",
+          "client_id": "282957820974-70ppinl6iv6226t6aei9sf0omhnj4pe7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.murilo.iwork",

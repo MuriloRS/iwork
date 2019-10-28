@@ -1,5 +1,5 @@
 import 'package:contratacao_funcionarios/src/blocs/email_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/input_field.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class ContactTab extends StatelessWidget {
   TextEditingController _controllerSubject;
   TextEditingController _controllerText;
-  UserProviderModel _model;
+  UserModel _model;
 
   EmailBloc bloc;
 
@@ -21,7 +21,7 @@ class ContactTab extends StatelessWidget {
     _controllerSubject = TextEditingController();
     _controllerText = TextEditingController();
     bloc = EmailBloc(context);
-    _model = Provider.of<UserProviderModel>(context);
+    _model = Provider.of<UserModel>(context);
 
     return DefaultSliverScaffold(
         titleScaffold: "Contato",
@@ -86,8 +86,8 @@ class ContactTab extends StatelessWidget {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Enviando email...",
-                                style: TextStyle(fontSize: 18))
+                            Text("Enviando...",
+                                style: TextStyle(fontSize: 18, color: Colors.white))
                           ],
                         );
                         break;
@@ -99,7 +99,7 @@ class ContactTab extends StatelessWidget {
                           bloc.emailDataController.add({
                             'subject': _controllerSubject.text,
                             'body': _controllerText.text,
-                            'email': _model.userFirebase.email
+                            'email': _model.email
                           });
 
                           _controllerSubject.text = "";

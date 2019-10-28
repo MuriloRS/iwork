@@ -1,12 +1,12 @@
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 class AutoCompleteInput extends StatefulWidget {
   final List<String> options;
   final String hintText;
   final GlobalKey<AutoCompleteTextFieldState<String>> _citieController;
-  final UserProviderModel _model;
+  final UserModel _model;
   final Stream<String> stream;
   final Function(String) onChanged;
   final String city;
@@ -38,14 +38,14 @@ class _AutoCompleteInputState extends State<AutoCompleteInput> {
           suggestions: widget.options,
           clearOnSubmit: false,
           textChanged: (s){
-            widget._model.userData['city'] = s;
+            widget._model.city = s;
           },
           textSubmitted: (text) => setState(() {
             if (text != "") {
               controller.text = text;
             }
 
-            widget._model.userData['city'] = text;
+            widget._model.city = text;
           }),
           decoration: InputDecoration(
             focusedErrorBorder: OutlineInputBorder(

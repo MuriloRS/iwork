@@ -1,7 +1,6 @@
-import 'package:contratacao_funcionarios/main.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
-import 'package:contratacao_funcionarios/src/screens/login_page.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
+
 import 'package:contratacao_funcionarios/src/widgets/drawer_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,9 +13,9 @@ class DrawerUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserProviderModel _model;
+    UserModel _model;
     UserBloc _bloc;
-    _model = Provider.of<UserProviderModel>(context);
+    _model = Provider.of<UserModel>(context);
     _bloc = new UserBloc();
 
     return SafeArea(
@@ -41,7 +40,7 @@ class DrawerUser extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                Text(_model.userData['name'],
+                Text(_model.name,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w400,
@@ -80,6 +79,7 @@ class DrawerUser extends StatelessWidget {
                   ),
                   onPressed: () {
                     _bloc.signout();
+                    _model.clear();
 
                     Navigator.pushReplacementNamed(context, '/loginPage');
                   },

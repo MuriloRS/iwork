@@ -1,6 +1,6 @@
 import 'package:contratacao_funcionarios/src/blocs/account_user_bloc.dart';
 import 'package:contratacao_funcionarios/src/blocs/user_bloc.dart';
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/shared/default_sliver_scaffold.dart';
 import 'package:contratacao_funcionarios/src/widgets/autocomplete_input.dart';
 import 'package:contratacao_funcionarios/src/widgets/button_input.dart';
@@ -28,7 +28,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
   GlobalKey<AutoCompleteTextFieldState<String>> _citieController =
       new GlobalKey();
   AccountUserBloc _bloc;
-  UserProviderModel _model;
+  UserModel _model;
 
   UserBloc _userBloc;
 
@@ -39,17 +39,15 @@ class _AccountUserTabState extends State<AccountUserTab> {
     _skillsInputController = TextEditingController();
     _telephoneController = TextEditingController();
 
-    _model = Provider.of<UserProviderModel>(context);
+    _model = Provider.of<UserModel>(context);
 
     _bloc = AccountUserBloc();
     _userBloc = UserBloc();
 
-
-    _emailInputController.text = _model.userFirebase.email;
-    _nomeInputController.text = _model.userData['name'];
-    _skillsInputController.text =
-        _userBloc.getUserSkills(_model.userData).trim();
-    _telephoneController.text = _model.userData['telephone'];
+    _emailInputController.text = _model.email;
+    _nomeInputController.text = _model.name;
+    _skillsInputController.text = _userBloc.getUserSkills(_model.skills).trim();
+    _telephoneController.text = _model.telephone;
 
     _listenOutState();
 
@@ -145,7 +143,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                               _model,
                               _bloc.outCities,
                               _bloc.changeCities,
-                              _model.userData['city']);
+                              _model.city);
                         }
                       },
                     ),
@@ -164,35 +162,6 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         false),
                     Text(
                       "Coloque apenas o que você já tem experiência. Separe por virgula, ex: mecânico, garçom.",
-                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Aceitar trabalho em qualquer horário? ",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: Theme.of(context).cardColor, fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    ComboboxButton(options: [
-                      DropdownMenuItem(
-                        child: Text('Sim',
-                            style: TextStyle(color: Colors.grey[700])),
-                        value: 'Sim',
-                      ),
-                      DropdownMenuItem(
-                        child: Text('Não',
-                            style: TextStyle(color: Colors.grey[700])),
-                        value: 'Não',
-                      )
-                    ], model: this._model, hintText: ""),
-                    Text(
-                      "Os estabelecimentos poderão entrar em contato em fins de semana, tarde da noite ou de madruga para resolver alguma emergência?",
                       style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                       textAlign: TextAlign.center,
                     ),
@@ -220,14 +189,13 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         child: ButtonInput.getButton(
                             TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar',
                             () {
-                          _model.userData['name'] = _nomeInputController.text;
-                          _model.userData['telephone'] =
-                              _telephoneController.text;
 
-                          _model.userData['skills'] = _skillsInputController
-                              .text
+                          _model.name = _nomeInputController.text;
+                          _model.telephone = _telephoneController.text;
+
+                          _model.skills = _skillsInputController.text
                               .replaceAll(' ', '')
-                              .split(",").toString().toLowerCase();
+                              .split(",");
 
                           _bloc.saveController.add(_model);
                         },
@@ -268,7 +236,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
             content: Container(
                 height: 50,
                 alignment: Alignment.center,
-                child: Text("Algum campo não foi preenchido!",
+                child: Text("Preencha os campos obrigatórios!",
                     style: TextStyle(fontSize: 18))),
           ));
           break;

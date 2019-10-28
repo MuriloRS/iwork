@@ -1,4 +1,4 @@
-import 'package:contratacao_funcionarios/src/models/user_provider_model.dart';
+import 'package:contratacao_funcionarios/src/models/user_model.dart';
 import 'package:contratacao_funcionarios/src/screens/login_page.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/account_user_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<UserProviderModel>.value(
-          value: UserProviderModel(),
+        ChangeNotifierProvider<UserModel>.value(
+          value: UserModel(),
         )
       ],
       child: MaterialApp(
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         supportedLocales: [const Locale('pt', 'BR')],
         title: 'Contratação de Funcionários',
         theme: _getThemeData(),
-        home: Consumer<UserProviderModel>(
+        home: Consumer<UserModel>(
           builder: (context, controller, widget) {
             return LoginPage();
           },
