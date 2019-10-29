@@ -8,10 +8,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class UserDetailScreen extends StatelessWidget {
   final TextStyle styleDefault = TextStyle(fontSize: 16);
+  String nameCompany;
   CompanyBloc bloc;
   DocumentSnapshot docProfessional;
 
-  UserDetailScreen(this.docProfessional);
+  UserDetailScreen(this.docProfessional, this.nameCompany);
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +109,7 @@ class UserDetailScreen extends StatelessWidget {
                                         al.buildDialogTerms(
                                             context,
                                             this.docProfessional,
+                                            nameCompany,
                                             bloc.buildAlertSendContract);
                                       },
                                     )
@@ -143,7 +145,7 @@ class UserDetailScreen extends StatelessWidget {
                           } else {
                             if (snapshot.data.documents.length == 0) {
                               return Container(
-                                padding: EdgeInsets.all(15),
+                                  padding: EdgeInsets.all(15),
                                   child: Text(
                                       "${docProfessional.data['name']} não tem nenhum contrato finalizado",
                                       textAlign: TextAlign.center,
@@ -177,7 +179,7 @@ class UserDetailScreen extends StatelessWidget {
                                             Text(
                                                 snapshot.data.documents
                                                     .elementAt(index)
-                                                    .data['company'],
+                                                    .data['nameCompany'],
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     fontSize: 20,
@@ -196,7 +198,7 @@ class UserDetailScreen extends StatelessWidget {
                                                 Text(
                                                     snapshot.data.documents
                                                         .elementAt(index)
-                                                        .data['skill'],
+                                                        .data['role'],
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color:

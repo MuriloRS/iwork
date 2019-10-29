@@ -19,6 +19,8 @@ class HistoricTile extends StatelessWidget {
           formatter.format((contract['dataInicio'] as Timestamp).toDate());
       final formatterCurrency =
           new NumberFormat.simpleCurrency(locale: 'pt-br', decimalDigits: 2);
+        
+        
 
       String newTotalValue = formatterCurrency.format(contract['totalValue']);
       return Container(
@@ -34,7 +36,7 @@ class HistoricTile extends StatelessWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(contract['companyName'],
+                Text(contract['nameCompany'],
                     style: TextStyle(color: Colors.white, fontSize: 18)),
                 Text(contract['status'],
                     style: TextStyle(
@@ -130,7 +132,7 @@ class HistoricTile extends StatelessWidget {
                     await Firestore.instance
                         .collection('contracts')
                         .document(contract['idDocument'])
-                        .updateData({'rating': rating});
+                        .updateData({'rating': rating.toString()});
                     Scaffold.of(context).showSnackBar(SnackBar(
                       duration: Duration(seconds: 3),
                       backgroundColor: Colors.green,

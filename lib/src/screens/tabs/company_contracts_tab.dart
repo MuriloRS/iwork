@@ -31,6 +31,14 @@ class CompanyContractsTab extends StatelessWidget {
                   return Center(child: Loader());
                 } else {
                   List<Widget> listContracts = new List();
+                  if (snapshot.data.documents.length == 0) {
+                    return Center(
+                        child: Text(
+                      "Você não fez nenhum contrato ainda.",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ));
+                  }
 
                   snapshot.data.documents.forEach((doc) {
                     var formatter = new DateFormat('dd/MM/yyyy');
@@ -79,7 +87,6 @@ class CompanyContractsTab extends StatelessWidget {
                           ),
                           doc.data['status'] == 'FINALIZADO'
                               ? Column(children: [
-                                  
                                   Row(
                                     children: <Widget>[
                                       Text(

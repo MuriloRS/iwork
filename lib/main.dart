@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _getThemeData() {
-    Color primary = Color.fromRGBO(30, 32, 36, 1);
+    Color primary = Color.fromRGBO(14, 14, 14, 1);
     Color accent = Color.fromRGBO(4, 231, 98, 1);
 
     return ThemeData(
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
         errorColor: Color.fromRGBO(209, 0, 0, 1),
         scaffoldBackgroundColor: primary,
         cardColor: Color.fromRGBO(241, 241, 241, 1),
-        primaryColorLight: Color.fromRGBO(45, 47, 51, 1),
+        primaryColorLight: Color.fromRGBO(30, 30, 30, 1),
         inputDecorationTheme: InputDecorationTheme(
           focusedErrorBorder:
               OutlineInputBorder(borderSide: new BorderSide(color: Colors.red)),

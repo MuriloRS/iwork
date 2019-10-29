@@ -38,7 +38,8 @@ class CompanyBloc extends BlocBase {
   Future<QuerySnapshot> searchProfessionalContracts(idProfessional) async {
     return await Firestore.instance
         .collection('contracts')
-        .where('professionalId', isEqualTo: idProfessional)
+        .where('professional', isEqualTo: idProfessional)
+        .where('status', isEqualTo: 'FINALIZADO')
         .getDocuments();
   }
 
@@ -57,18 +58,22 @@ class CompanyBloc extends BlocBase {
       if (params['rating'] != null && params['funcao'] != null) {
         if (doc.data['rating'] >= params['rating'] &&
             (doc.data['skills'] as List).contains(params['funcao'])) {
-          list.add(_buildSwiperItem(params['context'], doc));
+          list.add(
+              _buildSwiperItem(params['context'], doc, params['nameCompany']));
         }
       } else if (params['rating'] != null) {
         if (double.parse(doc.data['rating']) >= params['rating']) {
-          list.add(_buildSwiperItem(params['context'], doc));
+          list.add(
+              _buildSwiperItem(params['context'], doc, params['nameCompany']));
         }
       } else if (params['funcao'] != null) {
         if ((doc.data['skills'] as List).contains(params['funcao'])) {
-          list.add(_buildSwiperItem(params['context'], doc));
+          list.add(
+              _buildSwiperItem(params['context'], doc, params['nameCompany']));
         }
       } else {
-        list.add(_buildSwiperItem(params['context'], doc));
+        list.add(
+            _buildSwiperItem(params['context'], doc, params['nameCompany']));
       }
     });
     if (list.length == 0) {
@@ -77,10 +82,10 @@ class CompanyBloc extends BlocBase {
       listProfessionals = list;
       stateController.add(StateCurrent.SUCCESS);
     }
-    
   }
 
-  SwiperItem _buildSwiperItem(context, DocumentSnapshot document) {
+  SwiperItem _buildSwiperItem(
+      context, DocumentSnapshot document, String nameCompany) {
     final TextStyle styleDefault =
         TextStyle(fontSize: 18, fontWeight: FontWeight.w400);
 
@@ -161,7 +166,7 @@ class CompanyBloc extends BlocBase {
                                 COLOR_BUTTON.DEFAULT, 'Ver mais', () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      UserDetailScreen(document)));
+                                      UserDetailScreen(document, nameCompany)));
                             }, context, null, 15)),
                         SizedBox(
                           height: 25,
@@ -181,7 +186,7 @@ class CompanyBloc extends BlocBase {
                                   Alerts al = new Alerts();
 
                                   al.buildDialogTerms(context, document,
-                                      buildAlertSendContract);
+                                      nameCompany, buildAlertSendContract);
                                 },
                               )
                             ]),
@@ -189,9 +194,10 @@ class CompanyBloc extends BlocBase {
     });
   }
 
-  buildAlertSendContract(context, DocumentSnapshot doc) {
+  buildAlertSendContract(context, DocumentSnapshot doc, String nameCompany) {
     final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
     TextEditingController valorTotalController = TextEditingController();
+    TextEditingController posicaoController = TextEditingController();
     TextEditingController duracaoController = TextEditingController();
 
     final CurrencyInputFormatter _formatNumber = new CurrencyInputFormatter();
@@ -212,9 +218,12 @@ class CompanyBloc extends BlocBase {
             onPressed: () {
               if (DateTimePicker.selectedDate != null &&
                   DateTimePicker.selectedTime != null) {
+                stateController.add(StateCurrent.IDLE);
+
                 if (fbKey.currentState.validate()) {
                   Navigator.of(context).pop();
                   _saveNewContract(
+                      role: posicaoController.text,
                       dataInicio: DateTimePicker.selectedDate,
                       horaInicio: DateTimePicker.selectedTime,
                       docProfessional: doc.documentID,
@@ -225,9 +234,7 @@ class CompanyBloc extends BlocBase {
                       context: context);
                 }
               } else {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Você precisa preencher Data e Hora"),
-                ));
+                stateController.add(StateCurrent.FAIL);
               }
             },
           )
@@ -238,9 +245,45 @@ class CompanyBloc extends BlocBase {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
                     Widget>[
               SizedBox(
-                height: 30,
+                height: 15,
               ),
-              Text("Valor Total",
+              StreamBuilder(
+                  stream: this.stateController,
+                  builder: (context, AsyncSnapshot<StateCurrent> snapshot) {
+                    switch (snapshot.data) {
+                      case StateCurrent.FAIL:
+                        return Card(
+                          child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.info_outline,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                      child: Text(
+                                    "Todos os campos são obrigatórios para enviar a proposta.",
+                                    style: TextStyle(color: Colors.white),
+                                    maxLines: 3,
+                                    textAlign: TextAlign.center,
+                                  ))
+                                ],
+                              )),
+                          color: Colors.red,
+                        );
+                        break;
+                      default:
+                        return Container();
+                    }
+                  }),
+              SizedBox(
+                height: 15,
+              ),
+              Text("Valor Total*",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
               FormBuilderTextField(
                 attribute: 'valorField',
@@ -259,7 +302,7 @@ class CompanyBloc extends BlocBase {
               SizedBox(
                 height: 20,
               ),
-              Text("Duração do Serviço(horas)",
+              Text("Duração do Serviço(horas)*",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
               FormBuilderTextField(
                 attribute: 'duracao',
@@ -272,13 +315,26 @@ class CompanyBloc extends BlocBase {
               SizedBox(
                 height: 20,
               ),
-              Text("Data de Início",
+              Text("Posição*",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+              FormBuilderTextField(
+                attribute: 'posicaoField',
+                validators: [
+                  FormBuilderValidators.required(errorText: 'Campo Obrigatório')
+                ],
+                controller: posicaoController,
+                initialValue: '',
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text("Data de Início*",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
               DateTimePicker(false),
               SizedBox(
                 height: 20,
               ),
-              Text("Hora de Início",
+              Text("Hora de Início*",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
               DateTimePicker(true),
               SizedBox(
@@ -288,7 +344,8 @@ class CompanyBloc extends BlocBase {
   }
 
   void _saveNewContract(
-      {@required String docProfessional,
+      {@required String role,
+      @required String docProfessional,
       @required String docCompany,
       @required String valorTotal,
       @required DateTime dataInicio,
@@ -306,6 +363,7 @@ class CompanyBloc extends BlocBase {
         dataInicio.day, horaInicio.hour, horaInicio.minute);
 
     await Firestore.instance.collection('contracts').add({
+      'role': role,
       'totalValue': valor,
       'dataInicio': newDate,
       'duracao': duracao,

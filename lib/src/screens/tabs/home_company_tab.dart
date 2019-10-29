@@ -28,7 +28,7 @@ class HomeCompanyTab extends StatelessWidget {
       return AccountCompanyTab();
     }
     bloc.searchProfessionalController
-        .add({'context': context, 'funcao': null, 'rating': null});
+        .add({'context': context, 'funcao': null, 'rating': null, 'nameCompany': _model.name});
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -94,6 +94,7 @@ class HomeCompanyTab extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           'Nenhum Profissional Encontrado, tente alterar o filtro.',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -187,6 +188,9 @@ class HomeCompanyTab extends StatelessWidget {
                     max: 5.0,
                     divisions: 10,
                     initialValue: HomeCompanyTab.avaliacaoMedia,
+                    validators: [
+
+                    ],
                     onChanged: (newValue) {
                       avaliacaoMedia = newValue;
                     },

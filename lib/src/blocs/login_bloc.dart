@@ -54,15 +54,15 @@ class LoginBloc extends BlocBase {
 
       Map<String, dynamic> userData = await new UserBloc().currentUser();
 
-      userModel.ofMap(userData['userData']
-      );
+
+      userModel.ofMap(userData);
       userModel.notifyListeners();
 
-      if (!(userData['userFirebase'] as FirebaseUser).isEmailVerified) {
+      if (!_userAuth.user.isEmailVerified) {
         _typeUserController.add(TypeUser.NOT_CONFIRMED);
         _stateController.add(LoginState.FAIL);
       } else {
-        if (userData['userData']['isCompany']) {
+        if (userData['isCompany']) {
           _typeUserController.add(TypeUser.COMPANY);
         } else {
           _typeUserController.add(TypeUser.USER);

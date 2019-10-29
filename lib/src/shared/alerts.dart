@@ -22,8 +22,8 @@ class Alerts {
         });
   }
 
-  void buildDialogTerms(BuildContext context, DocumentSnapshot doc,
-      Function(BuildContext, DocumentSnapshot) contractDialog) {
+  void buildDialogTerms(BuildContext context, DocumentSnapshot doc, String
+      nameCompany, Function(BuildContext, DocumentSnapshot, String) contractDialog) {
     Alert(
         context: context,
         title: 'Termos de Serviço',
@@ -34,34 +34,39 @@ class Alerts {
               height: 10,
             ),
             Text(
-              "Esses são os termos de serviço da nossa plataforma, você precisa concordar com eles para enviar um contrato para um profissional",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)
-            ),
+                "Esses são os termos de serviço da nossa plataforma, você precisa concordar com eles para enviar um contrato para um profissional",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             SizedBox(
               height: 16,
             ),
             Text(
-              " - O contrato e forma de pagamento devem ser acordados entre a empresa e o profissional.",
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[800])
-            ),
+                " - O contrato e forma de pagamento devem ser acordados entre a empresa e o profissional.",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[800])),
             SizedBox(
               height: 10,
             ),
             Text(
-              " - Nós não nos responsabilizamos por quebra de contrato, não pagamento.",
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[800])
-            ),
+                " - Nós não nos responsabilizamos por quebra de contrato, não pagamento.",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[800])),
             SizedBox(
               height: 10,
             ),
             Text(
-              " - Caso ocorra algum problema nossa equipe deve ser informada para tomar as medidas cabíveis.",
-              textAlign: TextAlign.left,
-             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[800])
-            ),
+                " - Caso ocorra algum problema nossa equipe deve ser informada para tomar as medidas cabíveis.",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[800])),
             SizedBox(
               height: 10,
             )
@@ -69,10 +74,10 @@ class Alerts {
         ),
         buttons: [
           DialogButton(
-            child: Text("Aceito", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+            child: Text("Aceito",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             onPressed: () {
-
-              contractDialog(context, doc);
+              contractDialog(context, doc, nameCompany);
             },
           )
         ]).show();
