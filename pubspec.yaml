@@ -40,7 +40,6 @@ dependencies:
   auto_size_text: 2.1.0
   flutter_rating_bar: 3.0.0
   rflutter_alert: 1.0.3
-  swipe_stack: 1.0.0
   flutter_datetime_picker: 1.2.0
   google_sign_in: 4.0.7
 

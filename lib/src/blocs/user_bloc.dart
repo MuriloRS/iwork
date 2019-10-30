@@ -110,21 +110,17 @@ class UserBloc extends BlocBase {
     await FirebaseAuth.instance.signOut();
   }
 
-  dynamic getCurriculumUser(String curriculumName) async {
+  dynamic getCurriculumUser(String curriculumName, String userId) async {
     if (curriculumName == '') {
       return '';
     }
 
     StorageReference reference =
-        FirebaseStorage.instance.ref().child(_user.uid + "/$curriculumName");
+        FirebaseStorage.instance.ref().child(userId+ "/$curriculumName");
 
-    dynamic url;
-
-    try {
-      url = await reference.getDownloadURL();
-    } catch (e) {}
-
-    return url;
+    dynamic te= await reference.getDownloadURL();
+  
+    return te;
   }
 
   verifyEmailConfirmed() async {

@@ -68,7 +68,7 @@ class AccountUserBloc extends BlocBase {
     return listCities;
   }
 
-  _saveAccountDetail(UserModel user) {
+  _saveAccountDetail(UserModel user) async {
     stateController.add(AccountUserState.LOADING);
 
     try {
@@ -85,7 +85,7 @@ class AccountUserBloc extends BlocBase {
         return;
       }
 
-//Se for usuário comum então o telefone é obrigatório
+      //Se for usuário comum então o telefone é obrigatório
       if (!user.isCompany) {
         if (user.telephone == null || user.telephone == '') {
           telephoneController.addError("O campo telefone é obrigatório");
@@ -97,9 +97,14 @@ class AccountUserBloc extends BlocBase {
 
       if (this.curriculum != null) {
         user.curriculum = p.basename(this.curriculum.path);
+
+        FirebaseStorage.instance
+            .ref()
+            .child(user.documentId + "/" + user.curriculum)
+            .putFile(this.curriculum);
       } else {
         if (user.curriculum != '' && !user.isCompany) {
-          FirebaseStorage.instance
+          await FirebaseStorage.instance
               .ref()
               .child(user.documentId + "/" + user.documentId)
               .delete();
@@ -108,10 +113,10 @@ class AccountUserBloc extends BlocBase {
         user.curriculum = '';
       }
 
-      Firestore.instance
+      await Firestore.instance
           .collection("users")
           .document(user.documentId)
-          .updateData(user.toMap());
+          .setData(user.toMap());
 
       stateController.add(AccountUserState.SUCCESS);
     } catch (e) {

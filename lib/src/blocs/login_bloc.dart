@@ -99,13 +99,18 @@ class LoginBloc extends BlocBase {
 
       UserModel userModel = Provider.of<UserModel>(context);
       userModel.ofMap({
+        'city':'',
         'identificador': '',
         'curriculum': '',
+        'documentId': account.id,
         'email': account.email,
         'isCompany': false,
-        'name': '',
+        'profileCompleted':false,
+        'name': account.displayName,
         'rating': '0',
-        'senha': '',
+        'telephone': '',
+        'skills': [],
+
       });
 
       userModel.notifyListeners();

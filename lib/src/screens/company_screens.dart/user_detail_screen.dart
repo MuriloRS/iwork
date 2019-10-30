@@ -5,6 +5,7 @@ import 'package:contratacao_funcionarios/src/shared/custom_sliver_appbar.dart';
 import 'package:contratacao_funcionarios/src/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserDetailScreen extends StatelessWidget {
   final TextStyle styleDefault = TextStyle(fontSize: 16);
@@ -28,7 +29,7 @@ class UserDetailScreen extends StatelessWidget {
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.only(top: 15, left: 0, right: 0),
-                        height: MediaQuery.of(context).size.height - 400,
+                        height: MediaQuery.of(context).size.height - 370,
                         width: MediaQuery.of(context).size.width - 30,
                         child: Card(
                           elevation: 4,
@@ -89,7 +90,50 @@ class UserDetailScreen extends StatelessWidget {
                                             : " Sem experiência"),
                                     style: styleDefault),
                                 SizedBox(
-                                  height: 25,
+                                  height: 10,
+                                ),
+                                Center(
+                                  child: FutureBuilder(
+                                      future: bloc.searchProfessionalCurriculum(
+                                          this.docProfessional.documentID,
+                                          this
+                                              .docProfessional
+                                              .data['curriculum']),
+                                      builder: (context,
+                                          AsyncSnapshot<dynamic> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return OutlineButton(
+                                            padding: EdgeInsets.all(0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Icon(Icons.file_download),
+                                                Text("Currículo",
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline))
+                                              ],
+                                            ),
+                                            onPressed: () async {
+                                              if (await canLaunch(
+                                                  snapshot.data)) {
+                                                await launch(snapshot.data);
+                                              } else {
+                                                throw 'Could not launch ${snapshot.data}';
+                                              }
+                                            },
+                                          );
+                                        } else {
+                                          return Loader();
+                                        }
+                                      }),
+                                ),
+                                SizedBox(
+                                  height: 5,
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -97,7 +141,7 @@ class UserDetailScreen extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     FlatButton(
-                                      color: Theme.of(context).hintColor,
+                                      color: Theme.of(context).accentColor,
                                       child: Text('Propor Contrato',
                                           style: TextStyle(
                                               fontSize: 15,

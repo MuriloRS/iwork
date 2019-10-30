@@ -7,13 +7,10 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:swipe_stack/swipe_stack.dart';
 
 class HomeCompanyTab extends StatelessWidget {
   UserModel _model;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  static final GlobalKey<SwipeStackState> swipeKey =
-      new GlobalKey<SwipeStackState>();
   CompanyBloc bloc;
   final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
   static double avaliacaoMedia = 3.0;
@@ -27,8 +24,12 @@ class HomeCompanyTab extends StatelessWidget {
     if (!_model.profileCompleted) {
       return AccountCompanyTab();
     }
-    bloc.searchProfessionalController
-        .add({'context': context, 'funcao': null, 'rating': null, 'nameCompany': _model.name});
+    bloc.searchProfessionalController.add({
+      'context': context,
+      'funcao': null,
+      'rating': null,
+      'nameCompany': _model.name
+    });
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -71,58 +72,79 @@ class HomeCompanyTab extends StatelessWidget {
             onPressed: () {
               _showFilterDialog(context);
             }),
-        body: SingleChildScrollView(
-            child: Container(
-          padding: EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 5),
-          height: MediaQuery.of(context).size.height - 170,
-          child: StreamBuilder(
-            stream: bloc.outState,
-            builder: (context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.data == StateCurrent.LOADING ||
-                  !snapshot.hasData ||
-                  snapshot.connectionState.index ==
-                      ConnectionState.none.index ||
-                  snapshot.connectionState.index ==
-                      ConnectionState.waiting.index) {
-                return Loader();
+        body: StreamBuilder(
+          stream: bloc.outState,
+          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.data == StateCurrent.LOADING ||
+                !snapshot.hasData ||
+                snapshot.connectionState.index == ConnectionState.none.index ||
+                snapshot.connectionState.index ==
+                    ConnectionState.waiting.index) {
+              return Loader();
+            } else {
+              if (StateCurrent.EMPTY == snapshot.data) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Nenhum Profissional Encontrado, tente alterar o filtro.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                      )
+                    ],
+                  ),
+                );
               } else {
-                if (StateCurrent.EMPTY == snapshot.data) {
-                  return Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Nenhum Profissional Encontrado, tente alterar o filtro.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400),
-                        )
-                      ],
-                    ),
-                  );
+                String msgQtdFuncionarios = '';
+
+                if (bloc.listProfessionals.length == 1) {
+                  msgQtdFuncionarios = '1 Profissional Encontrado';
                 } else {
-                  return SwipeStack(
-                    key: swipeKey,
-                    children: bloc.listProfessionals,
-                    visibleCount: 3,
-                    stackFrom: StackFrom.Top,
-                    translationInterval: 6,
-                    scaleInterval: 0.03,
-                    historyCount: 3,
-                    onEnd: () => bloc.stateController.add(StateCurrent  .EMPTY),
-                    onSwipe: (int index, SwiperPosition position) =>
-                        debugPrint("onSwipe $index $position"),
-                    onRewind: (int index, SwiperPosition position) =>
-                        debugPrint("onRewind $index $position"),
-                  );
+                  msgQtdFuncionarios =
+                      bloc.listProfessionals.length.toString() +
+                          ' Profissionais Encontrado';
                 }
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(msgQtdFuncionarios,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).cardColor, fontSize: 20)),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SingleChildScrollView(
+                        child: Container(
+                            padding: EdgeInsets.only(
+                                top: 15, left: 15, right: 15, bottom: 5),
+                            height: MediaQuery.of(context).size.height - 135,
+                            child: ListView.separated(
+                              itemCount: bloc.listProfessionals.length,
+                              separatorBuilder: (context, index) {
+                                return SizedBox(
+                                  height: 10,
+                                );
+                              },
+                              itemBuilder: (context, index) {
+                                return bloc.listProfessionals.elementAt(index);
+                              },
+                            )))
+                  ],
+                );
               }
-            },
-          ),
-        )),
+            }
+          },
+        ),
       ),
     );
   }
@@ -188,9 +210,7 @@ class HomeCompanyTab extends StatelessWidget {
                     max: 5.0,
                     divisions: 10,
                     initialValue: HomeCompanyTab.avaliacaoMedia,
-                    validators: [
-
-                    ],
+                    validators: [],
                     onChanged: (newValue) {
                       avaliacaoMedia = newValue;
                     },

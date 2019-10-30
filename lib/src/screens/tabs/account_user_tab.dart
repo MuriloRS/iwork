@@ -173,7 +173,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                 )),
               ),
               SizedBox(
-                height: 25,
+                height: 20,
               ),
               StreamBuilder(
                 stream: _bloc.stateController,
@@ -189,14 +189,13 @@ class _AccountUserTabState extends State<AccountUserTab> {
                         child: ButtonInput.getButton(
                             TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar',
                             () {
-
                           _model.name = _nomeInputController.text;
                           _model.telephone = _telephoneController.text;
-
-                          _model.skills = _skillsInputController.text
-                              .replaceAll(' ', '')
-                              .split(",");
-
+                          if (_skillsInputController.text != '') {
+                            _model.skills = _skillsInputController.text
+                                .replaceAll(' ', '')
+                                .split(",");
+                          }
                           _bloc.saveController.add(_model);
                         },
                             context,

@@ -36,7 +36,7 @@ class HistoricTile extends StatelessWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(contract['nameCompany'],
+                Text(contract['companyName'],
                     style: TextStyle(color: Colors.white, fontSize: 18)),
                 Text(contract['status'],
                     style: TextStyle(

@@ -30,7 +30,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
     _userBloc = UserBloc();
 
     return FutureBuilder(
-      future: _userBloc.getCurriculumUser(basename),
+      future: _userBloc.getCurriculumUser(basename, widget._model.documentId),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {

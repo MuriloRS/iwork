@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
 class UserModel extends ChangeNotifier {
-  String name, email, senha, identificador, curriculum, telephone, city, rating, documentId;
+  String name,
+      email,
+      senha,
+      identificador,
+      curriculum,
+      telephone,
+      city,
+      rating,
+      documentId;
   bool isCompany, profileCompleted;
   List<dynamic> skills = List();
 
@@ -22,17 +30,16 @@ class UserModel extends ChangeNotifier {
   Map<String, dynamic> toMap() {
     return {
       'name': this.name,
-      'documentId': this.documentId,
       'email': this.email,
-      'password': this.senha,
-      'cpf': this.identificador,
+      'identificador': this.identificador,
       'isCompany': this.isCompany,
       'telephone': this.telephone,
       'profileCompleted': this.profileCompleted,
       'city': this.city,
       'rating': '0',
-      'curriculum': '',
-      'skills':[]
+      'curriculum': this.curriculum,
+      'skills': this.skills,
+      'documentId': this.documentId
     };
   }
 
@@ -51,18 +58,19 @@ class UserModel extends ChangeNotifier {
     this.skills = user['skills'];
   }
 
-  void clear(){
+  void clear() {
     this.name = null;
     this.documentId = null;
     this.identificador = null;
     this.email = null;
-    this.city= null;
+    this.city = null;
     this.senha = null;
     this.isCompany = null;
     this.curriculum = null;
     this.profileCompleted = null;
     this.rating = null;
     this.telephone = null;
-    this.skills = null;;
+    this.skills = null;
+    ;
   }
 }
