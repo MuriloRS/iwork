@@ -7,5 +7,7 @@ Um projeto pessoal feito em Flutter e Firebase, é um aplicativo para contrataç
 - [X] Tela de termos e condições
 - [X] Tela de conta da empresa e usuário não mostra loader carregando quando salva.
 - [ ] Login Google e Facebook.
+- [ ] Mudar form de apresentar os profissionais para a empresa de cards para uma lista.
+- [ ] Mostrar detalhes da empresa, principalmente endereço para o profissional que recebeu a proposta.
 - [ ] Chat com os funcionários escolhidos pela empresa ou estabelecimento, pode mandar proposta, e depois finalizar, quando as duas partes finalizarem ele se avaliam, essa avaliação ficará salvo no histórico profissional deles.
 
