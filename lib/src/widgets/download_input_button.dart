@@ -125,7 +125,7 @@ class _DownloadInputButtonState extends State<DownloadInputButton> {
                       color: Colors.transparent,
                       textColor: Colors.red,
                       onPressed: () {
-                        widget._bloc.deleteCurriculum(widget._model);
+                        widget._bloc.deleteCurriculum(widget._model.toMap());
 
                         setState(() {
                           isCurriculumLoaded = false;

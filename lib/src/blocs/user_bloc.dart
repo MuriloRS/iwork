@@ -144,6 +144,14 @@ class UserBloc extends BlocBase {
     return snapshot.data;
   }
 
+  Future<String> getAddressCompany(idCompany) async{
+    DocumentSnapshot company;
+
+    company = await Firestore.instance.collection('users').document(idCompany).get();
+
+    return company.data['address'];
+  }
+
   sendEmailVerification() async {
     _stateController.add(UserState.LOADING);
 

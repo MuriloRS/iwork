@@ -19,8 +19,6 @@ class HistoricTile extends StatelessWidget {
           formatter.format((contract['dataInicio'] as Timestamp).toDate());
       final formatterCurrency =
           new NumberFormat.simpleCurrency(locale: 'pt-br', decimalDigits: 2);
-        
-        
 
       String newTotalValue = formatterCurrency.format(contract['totalValue']);
       return Container(
@@ -36,7 +34,7 @@ class HistoricTile extends StatelessWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(contract['companyName'],
+                Text(contract['nameCompany'],
                     style: TextStyle(color: Colors.white, fontSize: 18)),
                 Text(contract['status'],
                     style: TextStyle(
@@ -44,56 +42,79 @@ class HistoricTile extends StatelessWidget {
               ],
             ),
             children: <Widget>[
-              Container(
-                  width: double.infinity,
-                  color: Colors.grey[100],
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("Data de início: " + date,
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 16)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text("Duração(Horas): " + contract['duracao'],
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 16)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text("Valor: $newTotalValue",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 16)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      StreamBuilder(
-                        stream: bloc.outContractsState,
-                        builder: (context, AsyncSnapshot<UserState> snapshot) {
-                          if (snapshot.hasData) {
-                            switch (snapshot.data) {
-                              case UserState.LOADING:
-                                return Loader();
-                                break;
-                              case UserState.SUCCESS:
-                                return _getSpecificButton(contract, context);
+              FutureBuilder(
+                future: bloc.getAddressCompany(contract['company']),
+                builder: (context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.connectionState.index ==
+                          ConnectionState.none.index ||
+                      snapshot.connectionState.index ==
+                          ConnectionState.waiting.index) {
+                    return Loader();
+                  } else {
+                    return Container(
+                        width: double.infinity,
+                        color: Colors.grey[100],
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text("Endereço: " + snapshot.data,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Data de início: " + date,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Duração(Horas): " + contract['duracao'],
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Valor: $newTotalValue",
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            StreamBuilder(
+                              stream: bloc.outContractsState,
+                              builder:
+                                  (context, AsyncSnapshot<UserState> snapshot) {
+                                if (snapshot.hasData) {
+                                  switch (snapshot.data) {
+                                    case UserState.LOADING:
+                                      return Loader();
+                                      break;
+                                    case UserState.SUCCESS:
+                                      return _getSpecificButton(
+                                          contract, context);
 
-                                break;
-                              default:
-                                return _getSpecificButton(contract, context);
-                            }
-                          } else {
-                            return Loader();
-                          }
-                        },
-                      )
-                    ],
-                  ))
+                                      break;
+                                    default:
+                                      return _getSpecificButton(
+                                          contract, context);
+                                  }
+                                } else {
+                                  return Loader();
+                                }
+                              },
+                            )
+                          ],
+                        ));
+                  }
+                },
+              ),
             ],
           ));
     }
@@ -105,7 +126,7 @@ class HistoricTile extends StatelessWidget {
         child: ListTile(
             contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             title: Text(
-              "Rock'n Play",
+              contract['nameCompany'],
               style:
                   TextStyle(fontSize: 20, color: Theme.of(context).cardColor),
             ),

@@ -6,9 +6,13 @@ import 'package:contratacao_funcionarios/src/shared/drawer_user.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreenUser extends StatelessWidget {
-  final _pageController = PageController();
+  int initialPage;
+  PageController _pageController;
+  HomeScreenUser(this.initialPage);
+
   @override
   Widget build(BuildContext context) {
+    _pageController = PageController(initialPage: this.initialPage);
     return Container(
         color: Colors.white,
         child: PageView(

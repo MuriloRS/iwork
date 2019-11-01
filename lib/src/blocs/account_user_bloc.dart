@@ -22,7 +22,7 @@ class AccountUserBloc extends BlocBase {
   final citiesController = BehaviorSubject<String>();
   final telephoneController = BehaviorSubject<String>();
   final curriculumController = BehaviorSubject<String>();
-  final saveController = BehaviorSubject<UserModel>();
+  final saveController = BehaviorSubject<Map<String,dynamic> >();
 
   //STREAMS
   Stream<AccountUserState> get outState => stateController.stream;
@@ -32,7 +32,7 @@ class AccountUserBloc extends BlocBase {
   Stream<String> get outCities => citiesController.stream;
   Stream<String> get outCurriculum => curriculumController.stream;
   Stream<String> get outTelephone => telephoneController.stream;
-  Stream<UserModel> get outSave => saveController.stream;
+  Stream<Map<String,dynamic> > get outSave => saveController.stream;
 
   //SINKS
   Function(String) get changeSkills => skillsController.sink.add;
@@ -40,7 +40,7 @@ class AccountUserBloc extends BlocBase {
   Function(String) get changeCities => citiesController.sink.add;
   Function(String) get changeCurriculum => curriculumController.sink.add;
   Function(String) get changeTelephone => telephoneController.sink.add;
-  Sink<UserModel> get changeSave => saveController.sink;
+  Sink<Map<String,dynamic> > get changeSave => saveController.sink;
 
   AccountUserBloc() {
     saveController.listen(_saveAccountDetail);
@@ -68,55 +68,55 @@ class AccountUserBloc extends BlocBase {
     return listCities;
   }
 
-  _saveAccountDetail(UserModel user) async {
+  _saveAccountDetail(Map<String,dynamic> user) async {
     stateController.add(AccountUserState.LOADING);
 
     try {
       //VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
-      if (user.name == null || user.name == '') {
+      if (user['name'] == null || user['name'] == '') {
         nameController.addError("O campo nome é obrigatório");
         stateController.add(AccountUserState.FAIL);
 
         return;
       }
-      if (user.city == null || user.city == '') {
+      if (user['city'] == null || user['city'] == '') {
         citiesController.addError("O campo cidade é obrigatório");
         stateController.add(AccountUserState.FAIL);
         return;
       }
 
       //Se for usuário comum então o telefone é obrigatório
-      if (!user.isCompany) {
-        if (user.telephone == null || user.telephone == '') {
+      if (!user['isCompany']) {
+        if (user['telephone'] == null || user['telephone'] == '') {
           telephoneController.addError("O campo telefone é obrigatório");
           stateController.add(AccountUserState.FAIL);
           return;
         }
       }
-      user.profileCompleted = true;
+      user['profileCompleted'] = true;
 
       if (this.curriculum != null) {
-        user.curriculum = p.basename(this.curriculum.path);
+        user['curriculum'] = p.basename(this.curriculum.path);
 
         FirebaseStorage.instance
             .ref()
-            .child(user.documentId + "/" + user.curriculum)
+            .child(user['documentId'] + "/" + user['curriculum'])
             .putFile(this.curriculum);
       } else {
-        if (user.curriculum != '' && !user.isCompany) {
+        if (user['curriculum'] != '' && !user['isCompany']) {
           await FirebaseStorage.instance
               .ref()
-              .child(user.documentId + "/" + user.documentId)
+              .child(user['documentId'] + "/" + user['documentId'])
               .delete();
         }
 
-        user.curriculum = '';
+        user['curriculum'] = '';
       }
 
       await Firestore.instance
           .collection("users")
-          .document(user.documentId)
-          .setData(user.toMap());
+          .document(user['documentId'])
+          .setData(user);
 
       stateController.add(AccountUserState.SUCCESS);
     } catch (e) {
@@ -132,7 +132,7 @@ class AccountUserBloc extends BlocBase {
     }
   }
 
-  void deleteCurriculum(UserModel model) {
+  void deleteCurriculum(Map<String,dynamic> model) {
     curriculum = null;
 
     _saveAccountDetail(model);

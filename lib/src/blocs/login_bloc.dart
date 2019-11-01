@@ -54,7 +54,6 @@ class LoginBloc extends BlocBase {
 
       Map<String, dynamic> userData = await new UserBloc().currentUser();
 
-
       userModel.ofMap(userData);
       userModel.notifyListeners();
 
@@ -85,6 +84,9 @@ class LoginBloc extends BlocBase {
   }
 
   void googleSignIn() async {
+    
+    _stateController.add(LoginState.LOADING);
+
     GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
@@ -97,31 +99,60 @@ class LoginBloc extends BlocBase {
     try {
       account = await _googleSignIn.signIn();
 
-      UserModel userModel = Provider.of<UserModel>(context);
-      userModel.ofMap({
-        'city':'',
-        'identificador': '',
-        'curriculum': '',
-        'documentId': account.id,
-        'email': account.email,
-        'isCompany': false,
-        'profileCompleted':false,
-        'name': account.displayName,
-        'rating': '0',
-        'telephone': '',
-        'skills': [],
+      final GoogleSignInAuthentication googleAuth =
+          await account.authentication;
 
-      });
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final FirebaseUser user =
+          (await _auth.signInWithCredential(credential)).user;
+
+      UserModel userModel = Provider.of<UserModel>(context);
+
+      bool exists = (await Firestore.instance
+              .collection('users')
+              .document(user.uid)
+              .get())
+          .exists;
+
+      if (exists) {
+        userModel.ofMap((await Firestore.instance
+                .collection('users')
+                .document(user.uid)
+                .get())
+            .data);
+      } else {
+        userModel.ofMap({
+          'city': '',
+          'identificador': '',
+          'curriculum': '',
+          'documentId': user.uid,
+          'email': account.email,
+          'isCompany': false,
+          'profileCompleted': false,
+          'name': account.displayName,
+          'rating': '0',
+          'telephone': '',
+          'skills': [],
+        });
+
+        await Firestore.instance
+            .collection('users')
+            .document(userModel.documentId)
+            .setData(userModel.toMap());
+      }
 
       userModel.notifyListeners();
 
-      await Firestore.instance.collection('users').add(userModel.toMap());
-
       _typeUserController.add(TypeUser.USER);
-      _stateController.add(LoginState.SUCCESS);
     } catch (error) {
       print(error);
     }
+
+    _stateController.add(LoginState.SUCCESS);
   }
 
   @override

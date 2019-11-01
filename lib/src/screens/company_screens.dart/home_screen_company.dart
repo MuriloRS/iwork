@@ -4,13 +4,16 @@ import 'package:contratacao_funcionarios/src/screens/tabs/contact_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/home_company_tab.dart';
 import 'package:contratacao_funcionarios/src/screens/tabs/how_works_tab.dart';
 import 'package:contratacao_funcionarios/src/shared/drawer_company.dart';
-import 'package:contratacao_funcionarios/src/shared/drawer_user.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreenCompany extends StatelessWidget {
-  final _pageController = PageController();
+  int initialPage;
+  PageController _pageController;
+  HomeScreenCompany(this.initialPage);
+
   @override
   Widget build(BuildContext context) {
+    _pageController = PageController(initialPage: this.initialPage);
     return Container(
         color: Colors.white,
         child: PageView(

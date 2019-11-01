@@ -196,7 +196,7 @@ class _AccountUserTabState extends State<AccountUserTab> {
                                 .replaceAll(' ', '')
                                 .split(",");
                           }
-                          _bloc.saveController.add(_model);
+                          _bloc.saveController.add(_model.toMap());
                         },
                             context,
                             Icon(FontAwesomeIcons.save,

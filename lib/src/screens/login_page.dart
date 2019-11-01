@@ -12,7 +12,6 @@ import 'package:contratacao_funcionarios/src/widgets/navigator_animation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -43,20 +42,22 @@ class _LoginPageState extends State<LoginPage> {
       _loginBloc.outTypeUser.listen((state) async {
         switch (state) {
           case TypeUser.COMPANY:
-            Navigator.of(context).pushReplacement(
-                NavigatorAnimation(widget: HomeScreenCompany()));
+            Navigator.of(context).pushReplacement(NavigatorAnimation(
+                widget: HomeScreenCompany(_model.profileCompleted ? 0 : 2)));
 
             break;
 
           case TypeUser.USER:
-            Navigator.of(context)
-                .pushReplacement(NavigatorAnimation(widget: HomeScreenUser()));
+            Navigator.of(context).pushReplacement(NavigatorAnimation(
+                widget: HomeScreenUser(_model.profileCompleted ? 0 : 2)));
+
             break;
           case TypeUser.NOT_CONFIRMED:
             Navigator.of(context).pushReplacement(NavigatorAnimation(
                 widget: EmailConfirmationScreen(
               typeUser: _userBloc.userData['isCompany'],
             )));
+
             break;
           default:
             return Container();
@@ -64,6 +65,40 @@ class _LoginPageState extends State<LoginPage> {
 
         return Container();
       });
+    }
+
+    Widget _getButtonGoogle() {
+      return FlatButton(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset("images/google_icon.png"),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Entrar com o Google",
+              style: TextStyle(
+                color: Colors.grey[800],
+                fontSize: 16,
+              ),
+            )
+          ],
+        ),
+        disabledColor: Colors.grey[300],
+        disabledTextColor: Colors.grey[500],
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        color: Colors.white,
+        shape: new RoundedRectangleBorder(
+            side: new BorderSide(color: Colors.grey[300]),
+            borderRadius: new BorderRadius.all(
+              Radius.circular(30),
+            )),
+        onPressed: () {
+          _listenState();
+          _loginBloc.googleSignIn();
+        },
+      );
     }
 
     Widget _getButtonLogin(fbKey) {
@@ -155,23 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Container(
                       width: double.infinity,
-                      child: StreamBuilder(
-                        stream: _loginBloc.outState,
-                        builder: (context, AsyncSnapshot<LoginState> snapshot) {
-                          switch (snapshot.data) {
-                            case LoginState.IDLE:
-                              return Container();
-                              break;
-
-                            case LoginState.LOADING:
-                              return Loader();
-
-                              break;
-                            default:
-                              return _getButtonLogin(fbKey);
-                          }
-                        },
-                      ),
+                      child: _getButtonLogin(fbKey),
                     ),
                     SizedBox(
                       height: 20,
@@ -194,6 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       height: 25,
                     ),
+                    /*
                     FlatButton(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -219,37 +239,11 @@ class _LoginPageState extends State<LoginPage> {
                       )),
                       color: Color.fromRGBO(60, 90, 153, 1),
                       onPressed: () {},
-                    ),
+                    ),*/
                     SizedBox(
                       height: 5,
                     ),
-                    FlatButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset("images/google_icon.png"),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "Entrar com o Google",
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 16,
-                            ),
-                          )
-                        ],
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      color: Colors.white,
-                      shape: new RoundedRectangleBorder(
-                          side: new BorderSide(color: Colors.grey[300]),
-                          borderRadius: new BorderRadius.all(
-                            Radius.circular(30),
-                          )),
-                      onPressed: _loginBloc.googleSignIn,
-                    ),
+                    _getButtonGoogle(),
                     SizedBox(
                       height: 20,
                     ),
@@ -291,7 +285,8 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future: Future.wait([futureCurrentUser, FirebaseAuth.instance.currentUser()]),
+      future:
+          Future.wait([futureCurrentUser, FirebaseAuth.instance.currentUser()]),
       builder: (context, AsyncSnapshot<List<Object>> snapshot) {
         if (snapshot.connectionState.index == ConnectionState.none.index ||
             snapshot.connectionState.index == ConnectionState.waiting.index) {
@@ -306,14 +301,51 @@ class _LoginPageState extends State<LoginPage> {
 
           _userBloc.isLoggedIn = true;
         }
-        if ( _userBloc.isLoggedIn) {
+        if (_userBloc.isLoggedIn) {
           if (_model.isCompany == true) {
-            return HomeScreenCompany();
+            return HomeScreenCompany(_model.profileCompleted ? 0 : 2);
           } else {
-            return HomeScreenUser();
+            return HomeScreenUser(_model.profileCompleted ? 0 : 2);
           }
         } else {
-          return _buildForm();
+          return Container(
+            width: double.infinity,
+            child: StreamBuilder(
+              stream: _loginBloc.outState,
+              builder: (context, AsyncSnapshot<LoginState> snapshot) {
+                switch (snapshot.data) {
+                  case LoginState.IDLE:
+                    return Container();
+                    break;
+
+                  case LoginState.LOADING:
+                    return Stack(
+                      children: <Widget>[
+                        _buildForm(),
+                        Container(
+                            color: const Color(0xFF000000).withOpacity(0.7),
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width),
+                        Center(
+                            child: Center(
+                          child: CircleAvatar(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.white,
+                                strokeWidth: 4.0,
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.green[600]),
+                              )),
+                        ))
+                      ],
+                    );
+
+                    break;
+                  default:
+                    return _buildForm();
+                }
+              },
+            ),
+          );
         }
       },
     ));

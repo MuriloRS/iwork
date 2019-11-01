@@ -18,6 +18,8 @@ class DrawerUser extends StatelessWidget {
     _model = Provider.of<UserModel>(context);
     _bloc = new UserBloc();
 
+
+
     return SafeArea(
         child: Drawer(
             child: Column(

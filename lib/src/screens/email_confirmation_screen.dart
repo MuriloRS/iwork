@@ -33,9 +33,9 @@ class EmailConfirmationScreen extends StatelessWidget {
           return Loader();
         } else if (snapshot.data.isEmailVerified) {
           if (this.typeUser == 1) {
-            return HomeScreenUser();
+            return HomeScreenUser(2);
           } else {
-            return HomeScreenCompany();
+            return HomeScreenCompany(2);
           }
         } else {
           return _buildBody(context);

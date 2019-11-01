@@ -20,6 +20,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
   TextEditingController _nomeInputController;
   TextEditingController _emailInputController;
   TextEditingController _telefoneInputController;
+  TextEditingController _addressController;
   GlobalKey<AutoCompleteTextFieldState<String>> _citieController =
       new GlobalKey();
   UserModel _model;
@@ -30,6 +31,7 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
     _nomeInputController = TextEditingController();
     _emailInputController = TextEditingController();
     _telefoneInputController = TextEditingController();
+    _addressController = TextEditingController();
     _model = Provider.of<UserModel>(context);
     _bloc = AccountUserBloc();
 
@@ -130,13 +132,29 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                   },
                 ),
                 SizedBox(
+                  height: 20,
+                ),
+                InputField(
+                    _addressController,
+                    false,
+                    TextInputType.text,
+                    'Endereço',
+                    [
+                      FormBuilderValidators.required(
+                          errorText: "O campo endereço é obrigatório")
+                    ],
+                    _bloc.outName,
+                    _bloc.changeName,
+                    'Endereco Conta',
+                    false),
+                SizedBox(
                   height: 30,
                 ),
                 StreamBuilder(
                   stream: _bloc.outState,
                   builder:
                       (context, AsyncSnapshot<AccountUserState> stateSnapshot) {
-                    switch (stateSnapshot.data) {   
+                    switch (stateSnapshot.data) {
                       case AccountUserState.LOADING:
                         return Loader();
                         break;
@@ -147,11 +165,19 @@ class _AccountCompanyTabState extends State<AccountCompanyTab> {
                               TYPE_BUTTON.IMAGE, COLOR_BUTTON.ACCENT, 'Salvar',
                               () {
                             _model.name = _nomeInputController.text;
-                            _model.telephone =
-                                _telefoneInputController.text;
+                            _model.telephone = _telefoneInputController.text;
+                            Map<String,dynamic> mapUser = _model.toMap();
 
-                            _bloc.saveController.add(_model);
-                          }, context, Icon(FontAwesomeIcons.save, color: Theme.of(context).primaryColor,), 20),
+                            mapUser['address'] = _addressController.text;
+
+                            _bloc.saveController.add(mapUser);
+                          },
+                              context,
+                              Icon(
+                                FontAwesomeIcons.save,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              20),
                         );
                     }
                   },

@@ -20,6 +20,7 @@ class HomeUserTab extends StatelessWidget {
     bloc = new UserBloc();
 
     if (!_model.profileCompleted) {
+
       return AccountUserTab();
     }
 
@@ -161,6 +162,8 @@ class HomeUserTab extends StatelessWidget {
     List<Widget> listContractsListview = new List();
 
     listContracts.forEach((c) {
+
+
       listContractsListview.add(HistoricTile(c, bloc));
     });
 
