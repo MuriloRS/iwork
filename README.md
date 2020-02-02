@@ -10,8 +10,13 @@ Um projeto pessoal feito em Flutter e Firebase, é um aplicativo para contrataç
 - [X] Mudar form de apresentar os profissionais para a empresa de cards para uma lista.
 - [X] Mostrar currículo do profissional na tela detalhes
 - [X] Mostrar detalhes da empresa, principalmente endereço para o profissional que recebeu a proposta.
-- [ ] Calcular média de avaliações
-- [ ] Avaliações com descrição
-- [ ] Login Facebook
-- [ ] Chat com os funcionários escolhidos pela empresa ou estabelecimento, pode mandar proposta, e depois finalizar, quando as duas partes finalizarem ele se avaliam, essa avaliação ficará salvo no histórico profissional deles.
 
+![alt text](https://github.com/MuriloRS/iwork/blob/master/images/2.png)
+
+![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-10-21-18-16-12-871_com.murilo.iwork.png)
+
+![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-10-22-14-16-57-643_com.murilo.iwork.png)
+
+![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-11-02-17-31-08-851_com.murilo.iwork.jpg)
+
+![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-11-02-17-31-15-745_com.murilo.iwork.jpg)
