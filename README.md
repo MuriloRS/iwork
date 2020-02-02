@@ -11,7 +11,7 @@ Um projeto pessoal feito em Flutter e Firebase, é um aplicativo para contrataç
 - [X] Mostrar currículo do profissional na tela detalhes
 - [X] Mostrar detalhes da empresa, principalmente endereço para o profissional que recebeu a proposta.
 
-![alt text](https://github.com/MuriloRS/iwork/images/2.png)
+![alt text](https://i.imgur.com/likNXBh.jpg)
 
 ![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-10-21-18-16-12-871_com.murilo.iwork.png)
 
