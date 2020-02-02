@@ -13,10 +13,10 @@ Um projeto pessoal feito em Flutter e Firebase, é um aplicativo para contrataç
 
 ![alt text](https://i.imgur.com/likNXBh.jpg)
 
-![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-10-21-18-16-12-871_com.murilo.iwork.png)
+![alt text](https://i.imgur.com/aqXT82Y.png)
 
-![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-10-22-14-16-57-643_com.murilo.iwork.png)
+![alt text](https://i.imgur.com/A3tUvzW.png)
 
-![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-11-02-17-31-08-851_com.murilo.iwork.jpg)
+![alt text](https://i.imgur.com/FE66iK9.jpg)
 
-![alt text](https://github.com/MuriloRS/iwork/blob/master/images/Screenshot_2019-11-02-17-31-15-745_com.murilo.iwork.jpg)
+![alt text](https://i.imgur.com/fnLrizU.png)
