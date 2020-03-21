@@ -323,12 +323,13 @@ class _LoginPageState extends State<LoginPage> {
                       children: <Widget>[
                         _buildForm(),
                         Container(
-                            color: const Color(0xFF000000).withOpacity(0.7),
+                            color: const Color(0xFF000000).withOpacity(0.8),
                             height: MediaQuery.of(context).size.height,
                             width: MediaQuery.of(context).size.width),
                         Center(
                             child: Center(
                           child: CircleAvatar(
+                              backgroundColor: Colors.transparent,
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.white,
                                 strokeWidth: 4.0,

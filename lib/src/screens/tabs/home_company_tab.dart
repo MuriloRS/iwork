@@ -105,9 +105,10 @@ class HomeCompanyTab extends StatelessWidget {
                 if (bloc.listProfessionals.length == 1) {
                   msgQtdFuncionarios = '1 Profissional Encontrado';
                 } else {
+                  
                   msgQtdFuncionarios =
                       bloc.listProfessionals.length.toString() +
-                          ' Profissionais Encontrado';
+                          ' Profissionais Encontrados';
                 }
 
                 return Column(
